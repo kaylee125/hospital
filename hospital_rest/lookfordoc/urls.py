@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path,include
 from . import views
 
+app_name = 'lookfordoc'
+
 urlpatterns = [
-    path('', views.index),
+    path('', views.index, name='index'),
     # path('api/', include(router.urls)),
     path('accounts/', include('accounts.urls',namespace='accounts')),
     # path('doc/', schema_view.with_ui('swagger', cache_timeout=0), name='doc'),
