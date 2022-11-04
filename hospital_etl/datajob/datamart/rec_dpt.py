@@ -22,11 +22,13 @@ class RecInternalMedicineSave:
         for idx, qus in enumerate(pd_qus['QUS_ANSWER']):
             if pd_qus['QUS_DOC'][idx] in qus :
                 pd_qus['QUS_ANSWER'][idx] = qus.split(pd_qus['QUS_DOC'][idx])[1]
-
-        df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
-        df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[0] + '%'))
-        
-        save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_INT_MED')
+        try :    
+            df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
+            df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[0] + '%'))
+            if df_qus.count() != 0 :
+                save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_INT_MED')
+        except :
+            pass
 
 class RecORTSave:
     """
@@ -46,11 +48,13 @@ class RecORTSave:
         for idx, qus in enumerate(pd_qus['QUS_ANSWER']):
             if pd_qus['QUS_DOC'][idx] in qus :
                 pd_qus['QUS_ANSWER'][idx] = qus.split(pd_qus['QUS_DOC'][idx])[1]
-                
-        df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
-        df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[1] + '%'))
-        save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_ORT')
-
+        try :
+            df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
+            df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[1] + '%'))
+            if df_qus.count() != 0 :
+                save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_ORT')
+        except:
+            pass
 
 class RecObstetricsSave:
     """
@@ -71,9 +75,13 @@ class RecObstetricsSave:
             if pd_qus['QUS_DOC'][idx] in qus :
                 pd_qus['QUS_ANSWER'][idx] = qus.split(pd_qus['QUS_DOC'][idx])[1]
                 
-        df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
-        df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[2] + '%'))
-        save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_OBSTETRICS')
+        try :        
+            df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
+            df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[2] + '%'))
+            if df_qus.count() != 0 :
+                save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_OBSTETRICS')
+        except:
+            pass        
 
 class RecDermaSave:
     """
@@ -93,10 +101,14 @@ class RecDermaSave:
         for idx, qus in enumerate(pd_qus['QUS_ANSWER']):
             if pd_qus['QUS_DOC'][idx] in qus :
                 pd_qus['QUS_ANSWER'][idx] = qus.split(pd_qus['QUS_DOC'][idx])[1]
-                
-        df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
-        df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[3] + '%'))
-        save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_DERMA')
+    
+        try :
+            df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
+            df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[3] + '%'))
+            if df_qus.count() != 0 :
+                save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_DERMA')
+        except:
+            pass
 
 class RecENTSave:
     """
@@ -117,9 +129,13 @@ class RecENTSave:
             if pd_qus['QUS_DOC'][idx] in qus :
                 pd_qus['QUS_ANSWER'][idx] = qus.split(pd_qus['QUS_DOC'][idx])[1]
                 
-        df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
-        df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[4] + '%'))
-        save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_ENT')
+        try :    
+            df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
+            df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[4] + '%'))
+            if df_qus.count() != 0 :
+                save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_ENT')
+        except:
+            pass
 
 class RecNeuroSave:
     """
@@ -139,10 +155,13 @@ class RecNeuroSave:
         for idx, qus in enumerate(pd_qus['QUS_ANSWER']):
             if pd_qus['QUS_DOC'][idx] in qus :
                 pd_qus['QUS_ANSWER'][idx] = qus.split(pd_qus['QUS_DOC'][idx])[1]
-                
-        df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
-        df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[5] + '%'))
-        save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_NEURO')
+        try:      
+            df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
+            df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[5] + '%'))
+            if df_qus.count() != 0 :
+                save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_NEURO')
+        except :
+            pass
 
 class RecUrologySave:
     """
@@ -162,10 +181,14 @@ class RecUrologySave:
         for idx, qus in enumerate(pd_qus['QUS_ANSWER']):
             if pd_qus['QUS_DOC'][idx] in qus :
                 pd_qus['QUS_ANSWER'][idx] = qus.split(pd_qus['QUS_DOC'][idx])[1]
-                
-        df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
-        df_qus =  df_qus.filter((df_qus.QUS_ANSWER.like('%' + cls.dpt_list[6] + '%') | (df_qus.QUS_ANSWER.like('%비뇨의학과%'))))
-        save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_UROLOGY')
+    
+        try:
+            df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
+            df_qus =  df_qus.filter((df_qus.QUS_ANSWER.like('%' + cls.dpt_list[6] + '%') | (df_qus.QUS_ANSWER.like('%비뇨의학과%'))))
+            if df_qus.count() != 0 :
+                save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_UROLOGY')
+        except :
+            pass
 
 class RecOphthalSave:
     """
@@ -186,7 +209,10 @@ class RecOphthalSave:
         for idx, qus in enumerate(pd_qus['QUS_ANSWER']):
             if pd_qus['QUS_DOC'][idx] in qus :
                 pd_qus['QUS_ANSWER'][idx] = qus.split(pd_qus['QUS_DOC'][idx])[1]
-                
-        df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
-        df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[7] + '%'))
-        save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_OPHTHAL')
+        try :
+            df_qus = get_spark_session().createDataFrame(pd_qus.drop(columns='QUS_DOC'))
+            df_qus =  df_qus.filter(df_qus.QUS_ANSWER.like('%' + cls.dpt_list[7] + '%'))
+            if df_qus.count() != 0 :
+                save_data(DataMart, df_qus.limit(int(df_qus.count())-1), 'SUB_OPHTHAL')
+        except :
+            pass
