@@ -7,10 +7,6 @@ __author__ = "Your Name"
 __version__ = "0.1.0"
 __license__ = "MIT"
 import sys
-<<<<<<< HEAD
-
-from datajob.extract.naver_jisik import NaverJisikExtractor
-=======
 from datajob.datamart.exact_dpt_answer import ExactDptAnswer
 from datajob.datamart.rec_dpt import RecDermaSave, RecENTSave, RecInternalMedicineSave, RecNeuroSave, RecORTSave, RecObstetricsSave, RecOphthalSave, RecUrologySave
 
@@ -27,7 +23,6 @@ from datajob.datamart.answer_delay import AnswerDelay
 from datajob.transform.test1 import SubjectiveTextVer
 from datajob.transform.write_obj_symt import WriteObjSymtTransfomer
 from infra.rawdata_upload import FileUpload
->>>>>>> 33e315d80fc94926bd58d200b8041adfd37d4376
 
 
 

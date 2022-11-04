@@ -2,13 +2,13 @@ from django.contrib import admin
 from django.urls import path,include
 from . import views
 
-appname='accounts'
+app_name='accounts'
 
 urlpatterns = [
-    path('signup/', views.signup),
-    path('login/', views.signin),
+    path('signup/', views.signup,name='signup'),
+    path('login/', views.signin ,name='login'),
     path('logout/', views.logout),
-    path('profile/', views.profile),
+    path('profile/', views.profile,name='profile'),
 
 
 ]

@@ -2,7 +2,7 @@ import json
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from account.forms import UserForm
+from accounts.forms import UserForm
 from django.contrib.auth import authenticate,login
 from django.http import HttpResponse
 
@@ -30,11 +30,11 @@ def signup(request):
 
 
 def signin(request):
-    return HttpResponse('로그인')
+    return render(request,'accounts/login.html')
 
     
 def logout(request):
     return HttpResponse('로그아웃')
 
 def profile(request):
-    return HttpResponse('프로필')
+    return render(request,'accounts/profile.html')

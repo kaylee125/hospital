@@ -1,16 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.http import HttpResponse
 # Create your views here.
 
 
 def symptom_input(request):
-    return HttpResponse('증상입력')
-
+    # return render(request,'.html',{"token":"9873216879"}))
+    return  HttpResponse('증상입력')
+    
 def symptom_choice(request):
-    return HttpResponse('증상선택')
+    return redirect('/')
 
 def check_dpt(request):
     return  HttpResponse('진료과목 확인')
+############################################
 
 def addr_input(request):
     return HttpResponse('주소입력')
