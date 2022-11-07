@@ -1,25 +1,25 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
-from .forms import SymptomInputForm
+# from .forms import SymptomInputForm
 # Create your views here.
 
 
 #증상입력: 텍스트로 입력 받고 모델결과 확인해서 결과가 잘 나오면 check_dpt로 render 안나오면 symptom_choice로 render
 def symptom_input(request):
     #  인자로 받은 요청의 메소드가 POST라면 증상 입력값을 db에 저장 
-    if request.method =='POST':
-        form = SymptomInputForm(request.POST)
+    # if request.method =='POST':
+    #     form = SymptomInputForm(request.POST)
 
-                # 유효성 검사+모델 통과
-        if form.is_valid():
-            symptom = SymptomInputForm()
-            symptom.symptominput = form.cleaned_data['symptominput']
-            SymptomInputForm.save()
-            return redirect('/')#이 부분 모델 결과에 따라 조건절로 redirect 다르게 설정하기
+    #             # 유효성 검사+모델 통과
+    #     if form.is_valid():
+    #         symptom = SymptomInputForm()
+    #         symptom.symptominput = form.cleaned_data['symptominput']
+    #         SymptomInputForm.save()
+    #         return redirect('/')#이 부분 모델 결과에 따라 조건절로 redirect 다르게 설정하기
 
-    # GET이라면 입력값을 받을 수 있는 html을 가져다 줘야함
-    else:
-        form = SymptomInputForm()
+    # # GET이라면 입력값을 받을 수 있는 html을 가져다 줘야함
+    # else:
+    #     form = SymptomInputForm()
 
     # return render(request,'.html',{"token":"9873216879"}))
     return render(request,'recommend/symptominput.html')
