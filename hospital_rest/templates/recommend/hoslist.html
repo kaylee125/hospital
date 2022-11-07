@@ -1,88 +1,31 @@
-
   {% extends 'base.html' %}
   {% block content %}
+  {% load static%}
   <div class="py-5 text-center align-items-center d-flex" style="background-image: linear-gradient(to left bottom, rgba(189, 195, 199, .75), rgba(44, 62, 80, .75)); background-size: 100%;">
     <div class="container py-5">
       <div class="row">
         <div class="col-md-8 mx-auto" style="">
           <h1 class="display-3 mb-4">진료과목&nbsp;</h1>
-          <h3 class="display-3" id="outputs">추천값</h3>
+          <h3 class="display-3" id="outputs"></h3>
         </div>
       </div>
     </div>
   </div>
-  <div class="pb-5">
-    <div class="container-fluid p-0"> <iframe width="100%" height="300" src="https://maps.google.com/maps?hl=en&amp;q=New%20York&amp;ie=UTF8&amp;t=&amp;z=14&amp;iwloc=B&amp;output=embed" scrolling="no" frameborder="0"></iframe> </div>
+  <div class="pb-5 px-0 mx-0">
     <div class="container">
       <div class="row">
-      </div>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6" style="">
-          <div class="mx-auto p-4 col-md-12">
-            <div class="row">
-              <div class="col-md-12">
-                <h2 class="mb-4">병원이름</h2>
-                <div class="row">
-                  <div class="col-md-6">
-                    <p>주소</p>
-                  </div>
-                  <div class="col-md-6"></div>
-                </div>
-              </div>
+        <div class="mx-auto col-md-12 py-4 px-0">
+          <h2 class="mb-4"><i class="fa fa-user-md" aria-hidden="true"></i> 병원리스트</h2>
+          <div class="row">
+            <div class="col-md-6 mt-5" id="hos_list">
+            <!-- 동적 자바스크립트로 병원리스트 뿌려주는 곳-->
             </div>
-            <div class="row">
-              <div class="col-md-6">
-                <p>거리</p>
-              </div>
-              <div class="col-md-6"></div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <p>영업시간</p>
-              </div>
-              <div class="col-md-6"></div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <p>전화번호</p>
-              </div>
-              <div class="col-md-6"></div>
-            </div>
-            <div class="row">
-              <div class="col-md-6">
-                <p>평점</p>
-              </div>
-              <div class="col-md-6"></div>
+            <div class="col-md-6 mt-4">
+              <div id='map' style="width:100%;height:400px;" ></div>
             </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-6" style="">
-              <div class="row">
-                <div class="col-md-12">
-                  <h5 class="text-right mt-3"></h5>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6" style="">
-              <div class="row">
-                <div class="col-md-12 text-left mt-3"><a class="btn btn-primary mt-2" href="#"><i class="fa fa-star fa-fw fa-1x py-1"></i></a></div>
-              </div>
-            </div>
-          </div>
-          <div class="row"></div>
-          <div class="row"></div>
-          <div class="row">
-            <div class="col-md-12"></div>
-          </div>
-        </div>
       </div>
-    </div>
-    <div class="container">
-      <div class="row"></div>
     </div>
   </div>
   <div class="text-white bg-dark" id="where">
@@ -119,11 +62,174 @@
       </div>
     </div>
   </div>
+
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
   <!-- Script: Smooth scrolling between anchors in the same page -->
-  <script src="js/smooth-scroll.js"></script>
+  <script src="{% static 'js/smooth-scroll.js' %}"></script>
   <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 20px;right:20px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:220px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;<img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16"></pingendo>
+  
+  
+  <!-- 지도부분 -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=89b0541f03013f5b0f1f1170d8eb4f37&libraries=services,clusterer,drawing"></script>
+  
+  <script>
+
+    // views.py 로부터 데이터 가져와서 json객체로 만들기
+    var data = '{{ datas|safe }}';
+    var json_data = JSON.parse(data);
+
+
+
+
+		var container = document.getElementById('map');
+		var options = {
+			center: new kakao.maps.LatLng(json_data[0].usr_lat, json_data[0].usr_lng),
+			level: 5
+		};
+    
+    var map = new kakao.maps.Map(container, options);
+
+    markers = new Array;
+
+    
+
+    // 추천과 출력
+    
+    document.getElementById('outputs').innerText = json_data[0].rec_dpt
+
+
+
+
+    // 병원 리스트 JS 동적 생성
+    let tagArea = document.getElementById('hos_list');
+
+    for (let index = 1; index < 6; index++) {
+
+      let new_divRowTag = document.createElement('div');
+      let new_divColTag = document.createElement('div');
+      let new_divLastTag = document.createElement('div');
+      let new_hNameTag = document.createElement('h5');
+      let new_hDistTag = document.createElement('h5');
+      let new_aTag = document.createElement('a');
+
+
+      
+      new_divRowTag.setAttribute('class', 'row');
+      new_divColTag.setAttribute('class', 'col-md-7 my-2');
+      new_divLastTag.setAttribute('class', 'col-md-4 my-2');
+
+
+      
+      new_divRowTag.setAttribute('id', 'row_div_'+String(index));
+      new_divColTag.setAttribute('id', 'name_div_'+String(index));
+      new_divLastTag.setAttribute('id', 'dist_div_'+String(index));
+      new_hNameTag.setAttribute('id', 'hos_name_'+String(index));
+      new_hDistTag.setAttribute('id', 'dist_'+String(index));
+      new_divRowTag.setAttribute('style', 'cursor: pointer;');
+      new_divRowTag.setAttribute('onclick', "location.href='" + 
+        "/recommend/hosinfo/" + 
+        json_data[index-1].rec_dpt + '&' + 
+        String(json_data[index-1].usr_lat) + '&' + 
+        String(json_data[index-1].usr_lng) +
+        "/" + 
+        String(json_data[index-1].hos_id) + 
+        "'");
+      
+      new_hNameTag.innerHTML = json_data[index-1].hos_name ;
+      new_hDistTag.innerHTML = String(json_data[index-1].dist) + "m" ;
+
+  
+      tagArea.appendChild(new_divRowTag);
+  
+
+      let target_row_div = document.getElementById('row_div_'+String(index));
+
+      target_row_div.appendChild(new_divColTag);
+      target_row_div.appendChild(new_divLastTag);
+      target_row_div.appendChild(new_aTag);
+
+      let target_name_div = document.getElementById("name_div_"+String(index));
+      let target_dist_div = document.getElementById('dist_div_'+String(index));
+      let target_name_h = document.getElementById('hos_name_'+String(index));
+      let target_dist_h = document.getElementById('dist_'+String(index));
+      
+      target_name_div.appendChild(new_hNameTag);
+      target_dist_div.appendChild(new_hDistTag);
+
+      document.getElementById("hos_name_"+String(index)).innerHTML = json_data[index-1].hos_name
+      document.getElementById("dist_"+String(index)).innerHTML = String(json_data[index-1].dist) + "m"
+      
+
+
+
+
+      
+    }
+
+
+
+    // 유저데이터
+    let marker = new kakao.maps.Marker({
+      position: new kakao.maps.LatLng(json_data[0].usr_lat, json_data[0].usr_lng)
+      });
+    markers.push(marker)
+
+    // 병원 markers 생성    
+    for (let index = 1; index < 6; index++) {
+      let marker = new kakao.maps.Marker({
+      position: new kakao.maps.LatLng( json_data[index-1].hos_lat, json_data[index-1].hos_lng )
+      });
+      markers.push(marker)
+    }
+
+
+    // Marker 담을 클러스터 객체 생성
+    var clusterer = new kakao.maps.MarkerClusterer({
+    map: map,
+    markers: markers,
+    gridSize: 35,
+    averageCenter: true,
+    minLevel: 6,
+    disableClickZoom: true,
+    styles: [{
+        width : '53px', height : '52px',
+        background: 'url(cluster.png) no-repeat',
+        color: '#fff',
+        textAlign: 'center',
+        lineHeight: '54px'
+    }]
+    });
+    //내위치 메시지박스 출력
+    var infowindow = new kakao.maps.InfoWindow({
+		    content : '<div style="padding:1px;">내위치</div>' // 인포윈도우에 표시할 내용
+		});
+
+		// 인포윈도우를 지도에 표시한다
+		infowindow.open(map, markers[0]);
+
+
+    // 병원 인포윈도우 표시
+    for (let index = 1; index < 6; index++) {
+
+      //내위치 메시지박스 출력
+      var infowindow = new kakao.maps.InfoWindow({
+      content : '<div style="padding:1px;">' +json_data[index-1].hos_name  + '</div>' // 인포윈도우에 표시할 내용
+      });
+
+      // 인포윈도우를 지도에 표시한다
+      infowindow.open(map, markers[index]);
+
+    }
+
+
+
+
+  </script>
+  
+
+
+
   
   {% endblock %}
