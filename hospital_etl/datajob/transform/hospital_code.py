@@ -3,7 +3,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 import re
-from infra.jdbc import DataWareHouse, save_data
+from infra.jdbc import DataWarehouse, save_data
 from infra.spark_session import get_spark_session
 from infra.util import cal_std_day
 from pyspark.sql.functions import col, monotonically_increasing_id, row_number
@@ -30,7 +30,7 @@ class HospitalCode:
             new_df=new_df.select(col('HOS_ID').cast('int'),col('사업장명').alias('HOS_NAME'),col('통합영업상태명').alias('STATUS'),col('업태구분명정보').alias('HOS_TYPE'),col('진료과목내용정보').alias('MEDI_COURSE'),col('소재지도로명주소').alias('ADDR'),col('소재지우편번호').alias('POST_CODE'),col('경도').alias('LONGITUDE').cast('float'),col('위도').alias('LATITUDE').cast('float'),col('소재지시설전화번호').alias('TEL'),col('시군코드').alias('SIDO_ID'))
 
             # save_data(DataWareHouse,new_df,'HOSPITAL_INFO_DETAIL')
-            save_data(DataWareHouse, new_df, 'HOSPITAL_INFO')
+            save_data(DataWarehouse, new_df, 'HOSPITAL_INFO')
             
         except Exception as e:
             traceback.print_exc()

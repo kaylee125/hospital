@@ -35,10 +35,10 @@ class KakaoMap:
 
         list_chunked = list_chunk(tel_list, 500)
         # print(len(list_chunked))
-        num=10
+        num=2
 
         #분할한 리스트 하나씩 반복
-        for tel_no in list_chunked[10:]:
+        for tel_no in list_chunked[3:]:
 
             kakao_url=[]
             data=[]
@@ -60,6 +60,7 @@ class KakaoMap:
                     link=s1.find('a')['href']
                     #문자열+숫자 중에서 숫자만 빼오기
                     numbers = re.sub(r'[^0-9]', '', link)
+                    print(numbers)
                     #카카오 url 추출
                     kakao_url.append('https://place.map.kakao.com/m/main/v/'+numbers)
                     

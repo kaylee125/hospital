@@ -22,7 +22,8 @@
             <div class="col-md-4" style=""></div>
             <div class="col-md-4" style=""></div>
           </div>
-          <form class="">
+          <form method="post" class="symptom input" action="{% url 'recommend:symptominput' %}">
+            {% csrf_token %} 
             <div class="form-group h-75"><label contenteditable="true"></label><textarea class="form-control bg-light text-dark h-100 w-100" id="exampleTextarea" rows="3"></textarea></div>
           </form>
           <div class="row"></div>
