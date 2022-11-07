@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from haversine import haversine
+from recommend.modules import inputs
+# from haversine import haversine
 from recommend.models import HospitalInfo
 from django.db.models import Q
 import pandas as pd
@@ -12,28 +13,31 @@ import json
 
 #증상입력: 텍스트로 입력 받고 모델결과 확인해서 결과가 잘 나오면 check_dpt로 render 안나오면 symptom_choice로 render
 def symptom_input(request):
-    #  인자로 받은 요청의 메소드가 POST라면 증상 입력값을 db에 저장 
-    # if request.method =='POST':
-    #     form = SymptomInputForm(request.POST)
-
-    #             # 유효성 검사+모델 통과
-    #     if form.is_valid():
-    #         symptom = SymptomInputForm()
-    #         symptom.symptominput = form.cleaned_data['symptominput']
-    #         SymptomInputForm.save()
-    #         return redirect('/')#이 부분 모델 결과에 따라 조건절로 redirect 다르게 설정하기
-
-    # # GET이라면 입력값을 받을 수 있는 html을 가져다 줘야함
-    # else:
-    #     form = SymptomInputForm()
-
-    # return render(request,'.html',{"token":"9873216879"}))
-    return render(request,'recommend/symptominput.html')
+    if request.method=='POST':
+        symptomtext=request.POST.get('symptomtext')
+        rec_dpt=inputs(symptomtext,1)
+        
+        return render(request,'recommend/symptominput.html',{'data':rec_dpt})
 
     
+    return render(request,'recommend/symptominput.html')
+   
+    # if request.method=='POST':
+    #     #모델 호출
+    #     input_text(입력값)
+    #     if 피쳐개수==0:
+    #         return redirect('/')
+    #     elif 피쳐개수==1:
+    #         return render(symptom_choice로 보내기)
+    #     else:
+    #         return render(request,'recommend/addrinput.html')
+
+    # else:
+
 
 #증상선택
 def symptom_choice(request):
+    #모듈호출
     return render(request,'recommend/symptomchoice.html')
 
 # # 진료과목 확인
@@ -44,9 +48,11 @@ def symptom_choice(request):
 #주소입력: 실시간 위치 받은 후 (js to html 탬플릿으로 데이터 전달) 탬플릿으로 데이터 받는다
 #확인을 누르면 최종 좌표값이 post방식으로 input태그에 담겨서 추천 병원(recommend_hos) 쪽으로 전달
 def addr_input(request):
-
+    symptomtext=request.POST.get('symptomtext')
+    rec_dpt=inputs(symptomtext,1)
+    print(rec_dpt)
     # 임의의 과 설정
-    rec_dpt = '정형외과'
+    # rec_dpt = '정형외과'
 
     data = []
     cols = ['rec_dpt']
@@ -55,7 +61,8 @@ def addr_input(request):
     rows.append(rec_dpt)
     tmp = dict(zip(cols,rows))
     data.append(tmp)
-    data = json.dumps(data)
+    data = json.dumps(data,ensure_ascii=False)
+    print(data)
     return render(request,'recommend/addrinput.html',{'datas':data})
 
 #추천병원

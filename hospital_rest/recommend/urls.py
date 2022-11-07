@@ -5,7 +5,7 @@ from . import views
 app_name='recommend'
 
 urlpatterns = [
-    path('symptominput/', views.symptom_input ,name='symptom_input'),
+    path('symptominput/', views.symptom_input ,name='symptominput'),
     path('symptomchoice/', views.symptom_choice,name='symptom_choice'),
     # path('check/', views.check_dpt,name='check_dpt'),
     path('addrinput/', views.addr_input,name='addr_input'),
