@@ -1,6 +1,6 @@
-
   {% extends 'base.html' %}
   {% block content %}
+  {% load static %}
 
   <div class="py-5 text-center align-items-center d-flex" style="background-image: linear-gradient(to left bottom, rgba(189, 195, 199, .75), rgba(44, 62, 80, .75)); background-size: 100%;">
     <div class="container py-5">
@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-  <div class="py-5 filter-dark cover bg-fixed" style="background-image: url(&quot;assets/styleguide/header.jpg&quot;); background-position: center bottom; background-size: 200%; background-repeat: repeat;" id="mission">
+  <div class="py-5 filter-dark cover bg-fixed" style="background-image: url(&quot;/static/assets/styleguide/header.jpg&quot;); background-position: center bottom; background-size: 200%; background-repeat: repeat;" id="mission">
     <div class="container w-100">
       <div class="row">
         <div class="col-md-12">
@@ -28,7 +28,7 @@
           <div class="row"></div>
           <div class="row">
             <div class="col-md-4"></div>
-            <div class="col-md-4"><a class="btn btn-primary w-75 ml-4 mt-5" href="#">진료과목 찾기</a></div>
+            <div class="col-md-4"><a class="btn btn-primary w-75 ml-4 mt-5" href="{% url 'recommend:addr_input'%}">진료과목 찾기</a></div>
             <div class="col-md-4"></div>
           </div>
         </div>
