@@ -20,101 +20,40 @@
                 <div class="row">
                   <div class="col-md-12">
                     <h1 class="text-center" style=""><i class="fa fa-plus-square" aria-hidden="true"></i><b>&nbsp; &nbsp;해당 하는 증상이나 증상의 부위를 선택해주세요</b></h1>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4 mt-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input" class="shadow"></div><span class="input-group-text" id="basic-addon1"><b>증상1</b>&nbsp;</span>
+                    <form method="post" action="{% url 'recommend:symptom_choice' %}">
+                      {% csrf_token %} 
+                      {% for data in datas %}
+                      <div class="row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4 mt-4">
+                          <div class="form-group">
+                            <div class="input-group ml-5">
+                              <div class="input-group-append">
+                                <div class="input-group-text" id="basic-addon1"><input type="checkbox" value="{{ data }}" name="symptom_selected" aria-label="Checkbox for following text input" class="shadow"></div><span class="input-group-text" id="basic-addon{{ forloop.counter0 }}"><b>{{ data }}</b>&nbsp;</span>
+                              </div>
                             </div>
                           </div>
                         </div>
+                        <div class="col-md-4"></div>
                       </div>
-                      <div class="col-md-4"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1" style=""><b>증상2</b></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1"><b>부위1&nbsp;</b></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1"><b>부위2</b></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1"><b>상태1</b></span>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1"><b>상태2</b></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4"></div>
-                    </div>
+                      {% endfor %}
+                    
                     <div class="row"></div>
                   </div>
                 </div>
-                <form class="">
                   <div class="form-group">
                   </div>
-                </form>
-                <form class="">
                   <div class="form-group">
                   </div>
-                </form>
-                <form class="">
                   <div class="form-group" style="">
                   </div>
-                </form>
-                <form class="">
                   <div class="form-group">
                   </div>
-                </form>
                 <div class="row">
                   <div class="col-md-12">
                     <div class="list-group mt-0 pt-0">
-                      <a href="#" class="list-group-item list-group-item-action active text-center mt-5"><b>당신의 진료 과목은?</b></a>
+                      <button type="submit" class="list-group-item list-group-item-action active text-center mt-5" >당신의 진료 과목은?</button>
+                      <!-- <a href="#" class="list-group-item list-group-item-action active text-center mt-5"><b>당신의 진료 과목은?</b></a> -->
                       <a href="#" class="list-group-item list-group-item-action text-center">진료 과목</a>
                     </div>
                   </div>
@@ -122,6 +61,7 @@
                 <div class="row">
                   <div class="col-md-12"><a class="btn btn-primary ml-0 mt-2 mr-0 pr-0 w-100" href="#">병원 찾기</a></div>
                 </div>
+                </form>
                 <div class="row">
                   <div class="col-md-12"></div>
                 </div>

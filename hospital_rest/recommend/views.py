@@ -37,6 +37,10 @@ def symptom_input(request):
 
 #증상선택
 def symptom_choice(request):
+    symptom_list = request.POST.getlist('symptom_selected')
+    symptomtext = ' '.join(symptom_list)
+    rec_dpt=inputs(symptomtext,1)
+    print(rec_dpt)
     #모듈호출
     return render(request,'recommend/symptomchoice.html')
 
@@ -52,6 +56,7 @@ def addr_input(request):
         symptomtext=request.POST.get('symptomtext')
         rec_dpt=inputs(symptomtext,1)
         print(rec_dpt)
+        
         
         # 추천과가 나온 경우
         if type(rec_dpt) is str :
@@ -73,8 +78,9 @@ def addr_input(request):
         elif rec_dpt == 0 :
             return redirect('/recommend/symptominput')
         # 피쳐 선정으로 가야 하는 경우
-        else :
-            return render(request,'recommend/symptominput.html')
+        elif type(rec_dpt) is list :
+            print(type(rec_dpt))
+            return render(request,'recommend/symptomchoice.html',{'datas':rec_dpt})
     else:
         return render(request,'recommend/addrinput.html')
     

@@ -91,6 +91,45 @@ def input_text(text):
 
 # 들어온 문장이 피처 1개만 포함한다면 그 피처와 관련된 진료과목들의 피처들을
 # 랜덤으로 뽑아서 6개만 리스트로 돌려주는 함수
+# def return_question(input_list):
+#     feat_out = []
+#     nonnull = []
+#     text= []
+#     question_lists = []
+#     apeen = []
+#     feats = return_features()
+#     for i in range(len(input_list)):
+#         if input_list[i][0] != 0:
+#             text.append(X_columns[i])
+#     # input_lists에서 0 이 아닌 것의 텍스트를 가져오기
+
+#     for i in range(len(feats)):
+#         if text in feats[i]:
+#             feat_out.append(feats[i])
+
+#     for i in feat_out:
+#         for j in i:
+#             apeen.append(j)
+#     tfidf_lists = list(set(apeen))
+
+#     if '0' in tfidf_lists:
+#         tfidf_lists.remove('0')
+
+#     ou = [X_columns.index(i) for i in tfidf_lists]
+
+#     random.shuffle(ou)
+#     indexes = random.sample(ou, 6)
+#     for i in range(len(input_list)):
+#         if input_list[i][0] != 0:
+#             nonnull.append(i)
+#     for i in indexes:
+#         if i in nonnull:
+#             indexes.remove(i)
+#     for i in indexes:
+#         question_lists.append(X_columns[i])
+
+#     return question_lists.append(X_columns[i])
+
 def return_question(input_list):
     feat_out = []
     nonnull = []
@@ -102,7 +141,7 @@ def return_question(input_list):
         if input_list[i][0] != 0:
             text.append(X_columns[i])
     # input_lists에서 0 이 아닌 것의 텍스트를 가져오기
-
+    last_one = text
     for i in range(len(feats)):
         if text in feats[i]:
             feat_out.append(feats[i])
@@ -127,8 +166,10 @@ def return_question(input_list):
             indexes.remove(i)
     for i in indexes:
         question_lists.append(X_columns[i])
-
-    return question_lists.append(X_columns[i])
+        
+    question_lists.append(last_one[0])
+    
+    return question_lists
 
 # 들어오는 피처 갯수에 따라
 # 피처 1이면 위에 return_question 써서 질문리스트 뽑아주는 함수사용해서 피처 6개불러와서 2차분류해주는 페이지에 반환해줘야함
