@@ -1,4 +1,4 @@
-  {% extends 'base.html' %}
+{% extends 'base.html' %}
   {% block content %}
   {% load static %}
   <div class="py-5 text-center align-items-center d-flex" style="background-image: linear-gradient(to left bottom, rgba(189, 195, 199, .75), rgba(44, 62, 80, .75)); background-size: 100%;">
@@ -6,7 +6,9 @@
       <div class="row">
         <div class="col-md-8 mx-auto" style="">
           <h1 class="display-3 mb-4">진료과목&nbsp;</h1>
-          <h3 class="display-3" id="outputs"> </h3>
+          {% for data in datas %}
+          <h3 class="display-3" id="outputs">{{data.rec_dpt}}</h3>
+          {% endfor %}
         </div>
       </div>
     </div>
@@ -54,7 +56,10 @@
       <div class="row">
         <div class="col-md-12 p-3 pb-5 text-center" style="">
           <div class="row">
-            <div class="col-md-12 pb-0 mb-0" style=""><div id='map' style="width:100%;height:400px;" ></div></div>
+            <div class="col-md-12 pb-0 mb-0" style="">
+              <div id='map' style="width:100%;height:400px;" ></div>
+              
+            </div>
           </div>
           <div class="row mt-3">
             <div class="col-md-6"></div>
@@ -185,19 +190,12 @@
   <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 20px;right:20px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:220px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;<img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16"></pingendo>
 </div>
 {% csrf_token %}
-<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9125a8570cf8af0420b89ca2523ea983&libraries=services,clusterer,drawing"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=89b0541f03013f5b0f1f1170d8eb4f37&libraries=services,clusterer,drawing"></script>
 	<script>
     var data = '{{ datas|safe }}';
     var json_data = JSON.parse(data);
 
 
-		var container = document.getElementById('map');
-		var options = {
-			center: new kakao.maps.LatLng(33.450701, 126.570667),
-			level: 3
-		};
-
-		var map = new kakao.maps.Map(container, options);
 function currentLocation() {
 	// HTML5의 geolocation으로 사용할 수 있는지 확인합니다
 	if (navigator.geolocation) {
@@ -272,7 +270,7 @@ function displayMarker(locPosition, message) {
 
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
     mapOption = { 
-        center: new kakao.maps.LatLng(37.5259136, 126.73024), // 지도의 중심좌표
+        center: new kakao.maps.LatLng(40.7259136, 126.73024), // 지도의 중심좌표
         level: 3 // 지도의 확대 레벨
     };
 
@@ -433,7 +431,7 @@ function displayCenterInfo(result, status) {
         for(var i = 0; i < result.length; i++) {
             // 행정동의 region_type 값은 'H' 이므로
             if (result[i].region_type === 'H') {
-                infoDiv.innerHTML = result[i].address_name;
+                infoDiv.innerText = result[i].address_name;
                 break;
             }
         }

@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from recommend.modules import inputs
-# from haversine import haversine
+from haversine import haversine
 from recommend.models import HospitalInfo
 from django.db.models import Q
 import pandas as pd
@@ -48,22 +48,36 @@ def symptom_choice(request):
 #주소입력: 실시간 위치 받은 후 (js to html 탬플릿으로 데이터 전달) 탬플릿으로 데이터 받는다
 #확인을 누르면 최종 좌표값이 post방식으로 input태그에 담겨서 추천 병원(recommend_hos) 쪽으로 전달
 def addr_input(request):
-    symptomtext=request.POST.get('symptomtext')
-    rec_dpt=inputs(symptomtext,1)
-    print(rec_dpt)
-    # 임의의 과 설정
-    # rec_dpt = '정형외과'
+    if request.method == "POST":
+        symptomtext=request.POST.get('symptomtext')
+        rec_dpt=inputs(symptomtext,1)
+        print(rec_dpt)
+        
+        # 추천과가 나온 경우
+        if type(rec_dpt) is str :
+            print(type(rec_dpt))
+            # 임의의 과 설정
+            # rec_dpt = '정형외과'
 
-    data = []
-    cols = ['rec_dpt']
-    rows = []
+            data = []
+            cols = ['rec_dpt']
+            rows = []
 
-    rows.append(rec_dpt)
-    tmp = dict(zip(cols,rows))
-    data.append(tmp)
-    data = json.dumps(data,ensure_ascii=False)
-    print(data)
-    return render(request,'recommend/addrinput.html',{'datas':data})
+            rows.append(rec_dpt)
+            tmp = dict(zip(cols,rows))
+            data.append(tmp)
+            data = json.dumps(data,ensure_ascii=False)
+            return render(request,'recommend/addrinput.html',{'datas':data})
+
+        # 증상입력을 다시 해야하는 경우
+        elif rec_dpt == 0 :
+            return redirect('/recommend/symptominput')
+        # 피쳐 선정으로 가야 하는 경우
+        else :
+            return render(request,'recommend/symptominput.html')
+    else:
+        return render(request,'recommend/addrinput.html')
+    
 
 #추천병원
 #addr_input에서 확인버튼이 rec_hos함수를 호출함
@@ -93,19 +107,12 @@ def recommend_hos(request):
             if "동" in info :
                 usr_dong.append(info)
 
-        # 사용자 거주시
-        usr_sigun = []
-        for info in info_list[2].split(' ') :
-            if "시" in info :
-                usr_sigun.append(info)
 
         # 사용자가 추천받은과
         rec_dpt = info_list[3]
 
         
         ##임의의 동이름 설정
-        usr_dong[0] = '중동'
-        usr_sigun[0] = '부천시'
 
         # DB에서 원하는 병원리스트 뽑아오기
         # hos_db = HospitalInfo.objects.filter(medi_course__contains=rec_dpt and medi_course__contains=usr_dong[0])
@@ -113,9 +120,8 @@ def recommend_hos(request):
         criterion1 = Q(medi_course__contains=rec_dpt)
         # 내위치에 맞는 리스트
         criterion2 = Q(addr__contains=usr_dong[0])
-        criterion3 = Q(addr__contains=usr_sigun[0])
         # 추천과 and 위치 만족하는 DB 행들의 모임
-        hos_db = HospitalInfo.objects.filter(criterion1 & criterion2 & criterion3)
+        hos_db = HospitalInfo.objects.filter(criterion1 & criterion2)
 
         cols = ['hos_id','hos_name','dist','hos_lat','hos_lng','rec_dpt','usr_lat','usr_lng']
         data = []
@@ -123,22 +129,24 @@ def recommend_hos(request):
             rows = []
             # 내 위치 위경도
             my_tus = (usr_lat,usr_lng)
+
             hos_tus = (float(hos.latitude),float(hos.longitude))
 
             # 직선거리
             dist = round(haversine(my_tus,hos_tus, unit='m'))
+            if dist < 2000 :
 
-            rows.append(hos.hos_id)
-            rows.append(hos.hos_name)
-            rows.append(dist)
-            rows.append(hos.latitude)
-            rows.append(hos.longitude)
-            rows.append(rec_dpt)
-            rows.append(usr_lat)
-            rows.append(usr_lng)
+                rows.append(hos.hos_id)
+                rows.append(hos.hos_name)
+                rows.append(dist)
+                rows.append(hos.latitude)
+                rows.append(hos.longitude)
+                rows.append(rec_dpt)
+                rows.append(usr_lat)
+                rows.append(usr_lng)
 
-            tmp = dict(zip(cols,rows))
-            data.append(tmp)
+                tmp = dict(zip(cols,rows))
+                data.append(tmp)
 
         data = json.dumps(data,ensure_ascii=False)
         # 판다스로 거리 오름차순 정렬
