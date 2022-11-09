@@ -174,21 +174,20 @@
     // 마커에 클릭 이벤트를 등록한다 (우클릭 : rightclick)
 		kakao.maps.event.addListener(marker, 'click', function() {
 
-      https://www.google.co.kr/maps/dir/37.504505,+126.76893/37.5031111,126.7658611/
 
-      var base_link = 'https://www.google.co.kr/maps/dir/';
-      var usr_loc = '{{usr_lat}}'+ ',' + '{{usr_lng}}'
-      var hos_loc = "{{data.latitude}}" + ',' + "{{data.longitude}}"
+      // var base_link = 'https://www.google.co.kr/maps/dir/';
+      // var usr_loc = '{{usr_lat}}'+ ',' + '{{usr_lng}}'
+      // var hos_loc = "{{data.latitude}}" + ',' + "{{data.longitude}}"
 
-      var link = base_link + usr_loc+ '/' + hos_loc + '/data=!3m1!4b1!4m2!4m1!3e3'
-
+      // var link = base_link + usr_loc+ '/' + hos_loc + '/data=!3m1!4b1!4m2!4m1!3e3'
 
 
-      // var base_link = 'https://map.kakao.com/link/to/';
-      // var hos_name = "{{data.hos_name}}"
-      // var hos_lat = "{{data.latitude}}"
-      // var hos_lng = "{{data.longitude}}"
-      // var link = base_link + hos_name+ ',' + hos_lat + ',' + hos_lng
+
+      var base_link = 'https://map.kakao.com/link/to/';
+      var hos_name = "{{data.hos_name}}"
+      var hos_lat = "{{data.latitude}}"
+      var hos_lng = "{{data.longitude}}"
+      var link = base_link + hos_name+ ',' + hos_lat + ',' + hos_lng
  
 
           // location.replace(link);
