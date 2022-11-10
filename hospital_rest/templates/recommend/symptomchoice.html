@@ -1,4 +1,4 @@
-  {% extends 'base.html' %}
+{% extends 'base.html' %}
   {% block content %}
   {% load static %}
   <div class="py-5 text-center align-items-center d-flex" style="background-image: linear-gradient(to left bottom, rgba(189, 195, 199, .75), rgba(44, 62, 80, .75)); background-size: 100%;">
@@ -6,6 +6,7 @@
       <div class="row">
         <div class="col-md-8 mx-auto" style="">
           <h2 class="">증상 재확인 요청</h2>
+          <h2 id="warn_text" class=""></h2>
         </div>
       </div>
     </div>
@@ -20,87 +21,49 @@
                 <div class="row">
                   <div class="col-md-12">
                     <h1 class="text-center" style=""><i class="fa fa-plus-square" aria-hidden="true"></i><b>&nbsp; &nbsp;해당 하는 증상이나 증상의 부위를 선택해주세요</b></h1>
-                    <div class="row">
+                    <form method="post" action="{% url 'recommend:check_dpt' %}">
+                      {% csrf_token %} 
+                      {% for data in datas %}
+                      <div class="row">
                         <div class="col-md-4"></div>
                         <div class="col-md-4 mt-4">
                           <div class="form-group">
                             <div class="input-group ml-5">
                               <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input" class="shadow"></div><span class="input-group-text" id="basic-addon1"><b>증상1</b>&nbsp;</span>
+                                <div class="input-group-text" id="basic-addon1"><input type="checkbox" value="{{ data }}" name="symptom_selected" aria-label="Checkbox for following text input" class="shadow"></div><span class="input-group-text" id="basic-addon{{ forloop.counter0 }}"><b>{{ data }}</b>&nbsp;</span>
                               </div>
                             </div>
                           </div>
                         </div>
                         <div class="col-md-4"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1" style=""><b>증상2</b></span>
-                            </div>
-                          </div>
-                        </div>
                       </div>
-                      <div class="col-md-4"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1"><b>부위1&nbsp;</b></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1"><b>부위2</b></span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-4"></div>
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <div class="input-group ml-5">
-                            <div class="input-group-append">
-                              <div class="input-group-text" id="basic-addon1"><input type="checkbox" aria-label="Checkbox for following text input"></div><span class="input-group-text" id="basic-addon1"><b>상태1</b></span>
-                            </div>
+                      {% endfor %}
+                      <input type="hidden" value="{{ fix_feature }}" name="fix_feature" aria-label="Checkbox for following text input" class="shadow">
+                      <input type="hidden" value="{{ datas }}" name="symtpom_retry" aria-label="Checkbox for following text input" class="shadow">
+                    <div class="row"></div>
                   </div>
                 </div>
-                <div class="form-group">
-                </div>
-                <div class="form-group">
-                </div>
-                <div class="form-group" style="">
-                </div>
-                <div class="form-group">
-                </div>
+                  <div class="form-group">
+                  </div>
+                  <div class="form-group">
+                  </div>
+                  <div class="form-group" style="">
+                  </div>
+                  <div class="form-group">
+                  </div>
                 <div class="row">
                   <div class="col-md-12">
                     <div class="list-group mt-0 pt-0">
-                      <a href="#" class="list-group-item list-group-item-action active text-center mt-5"><b>당신의 진료 과목은?</b></a>
+                      <a class="list-group-item list-group-item-action active text-center mt-5" onClick="window.location.reload()" href="#" >선택지 새로고침</button>
+                      <!-- <a href="#" class="list-group-item list-group-item-action active text-center mt-5"><b>당신의 진료 과목은?</b></a> -->
                       <a href="#" class="list-group-item list-group-item-action text-center">진료 과목</a>
                     </div>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-md-12"><a class="btn btn-primary ml-0 mt-2 mr-0 pr-0 w-100" href="#">병원 찾기</a></div>
+                  <div class="col-md-12"><button type="submit" class="btn btn-primary ml-0 mt-2 mr-0 pr-0 w-100" >진료과목 확인</button></div>
                 </div>
+                </form>
                 <div class="row">
                   <div class="col-md-12"></div>
                 </div>
@@ -147,10 +110,27 @@
       </div>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js">
+
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <!-- Script: Smooth scrolling between anchors in the same page -->
   <script src="{% static 'js/smooth-scroll.js' %}"></script>
   <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 20px;right:20px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:220px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;<img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16"></pingendo>
+  <script type="text/javascript">
+    
+    // 선택을 하난도 안할 경우 경고문 출력
+    var data = '{{ warn_text }}';
+
+      if (data == '아무것도 선택하지 않았습니다. 최소 1개 이상 선택 해야 합니다.') {
+
+          document.getElementById('warn_text').innerText = data
+
+        
+      }
+
+
+
+  
+  </script>
   {% endblock %}

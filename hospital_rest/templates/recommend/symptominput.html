@@ -1,4 +1,4 @@
-  {% extends 'base.html' %}
+{% extends 'base.html' %}
   {% block content %}
   {% load static %}
 
@@ -7,6 +7,7 @@
       <div class="row">
         <div class="col-md-8 mx-auto" style="">
           <h2 class="">당신의 증상 및 상태를 입력해보세요</h2>
+          <h2 id="warn_text" class=""></h2>
         </div>
       </div>
     </div>
@@ -15,7 +16,7 @@
     <div class="container w-100">
       <div class="row"> 
         <div class="col-md-12">
-          <form method="post" class="symptom input" action="{% url 'recommend:addr_input' %}">
+          <form method="post" class="symptom input" action="{% url 'recommend:check_dpt' %}">
           {% csrf_token %} 
           <div class="row">
             <div class="col-md-4 mt-0" style="">
@@ -25,7 +26,10 @@
             <div class="col-md-4" style=""></div>
           </div>
 
-            <div class="form-group h-75"><label contenteditable="true"></label><input type="text" name='symptomtext' class="form-control bg-light text-dark h-100 w-100" id="exampleTextarea" rows="3"></div>
+            <div class="form-group h-75">
+              <label contenteditable="true"></label>
+              <textarea id="symptomtext" name = "symptomtext" cols = "125" rows = "5" maxlength = "400" placeholder = "이곳에 입력해주세요." ></textarea>
+            </div>
           
           <div class="row"></div>
           <div class="row">
@@ -78,4 +82,21 @@
   <!-- Script: Smooth scrolling between anchors in the same page -->
   <script src="{% static 'js/smooth-scroll.js' %}"></script>
   <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 20px;right:20px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:220px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;<img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16"></pingendo>
+  <script type="text/javascript">
+
+
+      var data = '{{ datas|safe }}';
+      var json_data = JSON.parse(data);
+
+      if (json_data[0].result == 0) {
+          document.getElementById('symptomtext').innerText = json_data[0].usr_input
+          document.getElementById('warn_text').innerText = json_data[0].warn_text
+
+        
+      }
+
+
+
+  </script>
+  
   {% endblock %}

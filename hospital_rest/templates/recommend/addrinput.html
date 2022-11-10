@@ -6,9 +6,9 @@
       <div class="row">
         <div class="col-md-8 mx-auto" style="">
           <h1 class="display-3 mb-4">진료과목&nbsp;</h1>
-          {% for data in datas %}
-          <h3 class="display-3" id="outputs">{{data.rec_dpt}}</h3>
-          {% endfor %}
+
+          <h3 class="display-3" id="outputs"></h3>
+
         </div>
       </div>
     </div>
@@ -194,7 +194,9 @@
 	<script>
     var data = '{{ datas|safe }}';
     var json_data = JSON.parse(data);
-
+    my_lat = '';
+    console.log(json_data)
+    document.getElementById('outputs').innerText = json_data[0].rec_dpt
 
 function currentLocation() {
 	// HTML5의 geolocation으로 사용할 수 있는지 확인합니다
@@ -304,14 +306,8 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
 	my_lat = latlng.getLat();
 	my_lng = latlng.getLng();
   loc = String(my_lat)+ ',' +String(my_lng);
-	console.dir(loc)
-	// document.getElementById("loc").value = loc;
-	// document.getElementById("my_lng").value = my_lng;
 
-  // 추천과 출력
-
-  document.getElementById('outputs').innerText = json_data[0].rec_dpt
-
+  
 });
 
   // a 태그 post로 넘기기
@@ -338,6 +334,13 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
             input[i].setAttribute('name', parm[i][0]);
             input[i].setAttribute("value", parm[i][1]);
             form.appendChild(input[i]);
+        }
+  
+        
+        if (my_lat == '') {
+          loc = String(first_lat)+ ',' +String(first_lon);
+          my_addr = '없는주소'
+          console.log(loc)
         }
         info = loc + ',' + my_addr + ',' + json_data[0].rec_dpt
         
@@ -431,6 +434,7 @@ function displayCenterInfo(result, status) {
         for(var i = 0; i < result.length; i++) {
             // 행정동의 region_type 값은 'H' 이므로
             if (result[i].region_type === 'H') {
+                console.log("result값은" + result[i])
                 infoDiv.innerText = result[i].address_name;
                 break;
             }
