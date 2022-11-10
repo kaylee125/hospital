@@ -122,6 +122,30 @@ def check_dpt(request):
             symptomtext = ' '.join(symptom_list)
             rec_dpt=inputs(symptomtext,1)
 
+            #db저장
+            if request.user.is_authenticated:
+
+                print(request.user.is_authenticated)
+                rec_his=RecHistory.objects.all()
+                rec_his.symtominput=symptomtext
+                rec_his.rec_dpt=rec_dpt
+                rec_his.id=request.user.id
+                input_date=date.today()
+                rec_his.input_date=input_date.isoformat()
+                print(rec_his)
+                rec_his.save()
+                
+                data = []
+                cols = ['rec_dpt']
+                rows = []
+
+                rows.append(rec_dpt)
+                tmp = dict(zip(cols,rows))
+                data.append(tmp)
+                data = json.dumps(data,ensure_ascii=False)
+                return render(request,'recommend/addrinput.html',{'datas':data})
+            
+
             data = []
             cols = ['rec_dpt']
             rows = []
