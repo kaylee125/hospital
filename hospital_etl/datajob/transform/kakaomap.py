@@ -19,10 +19,10 @@ class KakaoMap:
     def transform_data(cls):
         for n in range(1,33):
             sub_dir=str(n)+'kakao_hos_info2022-11-04.json'  
-            file_dir= cls.BASE_DIR+sub_dir
+        file_dir= cls.BASE_DIR+sub_dir
             df=get_spark_session().read.json(file_dir, encoding='UTF-8')
             # df=get_spark_session().createDataFrame(data)
-
+           
             kakao_df=df.select(col('병원명').alias('hos_name'),col('전화번호').alias('tel'),col('의사 수 ').alias('num_docs'),
             col('진료정보').alias('open_info'),col('별점').alias('score').cast('float'),col('리뷰텍스트').alias('reviews'))
 

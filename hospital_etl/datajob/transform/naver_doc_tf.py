@@ -12,7 +12,7 @@ class DocInfoTransformer:
     def transform(cls):
 
         data = []
-        path = cls.FILE_DIR + cls.FILE_NAME     
+        path = cls.FILE_DIR + cls.FILE_NAME      
         doc_info_json = get_spark_session().read.json(path,encoding='UTF-8')
         for r1 in doc_info_json.select(doc_info_json.data, doc_info_json.meta.std_day).toLocalIterator():
             for r2 in r1.data:

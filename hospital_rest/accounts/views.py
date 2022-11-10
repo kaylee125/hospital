@@ -10,7 +10,7 @@ def signup(request):
     if request.method=='POST':
         form=UserForm(request.POST)
         if form.is_valid():
-            form.save()
+    form.save()
 
             id = form.cleaned_data.get('id')
             password = form.cleaned_data.get('password')
@@ -20,21 +20,17 @@ def signup(request):
             age = form.cleaned_data.get('age')
             user = authenticate(username=id, password=password)
             login(request, user)
-            return redirect('/')
-    else:
-        form= UserForm()
-
+    return redirect('/')
+            
     return render(request, 'accounts/signup.html', {'form': form})
 
-            
+        
 
-
+    
 def signin(request):
     return render(request,'accounts/login.html')
 
-    
-def logout(request):
-    return HttpResponse('로그아웃')
+
 
 def profile(request):
     return render(request,'accounts/profile.html')

@@ -75,8 +75,8 @@ def addr_input(request):
         # 피쳐 선정으로 가야 하는 경우
         else :
             return render(request,'recommend/symptominput.html')
-    else:
-        return render(request,'recommend/addrinput.html')
+        else:
+    return render(request,'recommend/addrinput.html')
     
 
 #추천병원
@@ -182,4 +182,3 @@ def hos_info(request,get_param,param):
 #병원 기록 저장
 def save_hos_info(request):
     return render(request,'recommend/hos_save.html')
-
