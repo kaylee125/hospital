@@ -37,9 +37,9 @@
             <a class="nav-link" name=logout href="{% url 'accounts:logout' %}">{{user.username}}|로그아웃</a>
           </li>
           <li class="nav-item" style="">
-            <a class="nav-link" href="#what">고객센터</a>
+            <a class="nav-link" href="{% url 'accounts:profile' %}">프로필</a></li>
           {% else %}
-          </li>
+          
           <li class="nav-item" style="">
             <a class="nav-link" href="{% url 'accounts:login' %}">로그인</a>
           </li>
