@@ -138,3 +138,14 @@ class HospitalInfo(models.Model):
     class Meta:
         managed = False
         db_table = 'hospital_info'
+
+class RecHistory(models.Model):
+    rh_key = models.BigAutoField(primary_key=True)
+    id = models.ForeignKey(AuthUser, models.DO_NOTHING, db_column='id')
+    symtominput = models.CharField(max_length=4000, blank=True, null=True)
+    rec_dpt = models.CharField(max_length=100, blank=True, null=True)
+    input_date = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'rec_history'

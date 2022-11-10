@@ -30,7 +30,28 @@ def signup(request):
     user = authenticate(username=username, password=raw_password)  # 사용자 인증
     login(request, user)  # 로그인
     return redirect('/')
-            
+
+def profile(request):
+
+    #이름,이메일 데이터 보여주기
+    if request.user.is_authenticated:
+        
+        userinfo={'username':request.user.username,'email':request.user.email}
+    
+        return render(request,'accounts/profile.html',userinfo)
+
+    #나의 기록 확인하기
+    if request.method=="POST":
+        rec_dpt='정형외과'
+        symptomtext='머리가 아프고 울렁거려요'
+        form={'rec_dpt':rec_dpt,'symptomtext':symptomtext}
+
+        return render(request,'accounts/profile.html',form)
+
+
+    #진료과 찾기
+
+                
 #로그인
  #post방식으로 받으면  계정정보가 있는지 확인해주고 정보가 있다면 로그인,
  # 그렇지 않다면 login창으로 돌아가 에러메세지 출력을 위한 메세지 보내기
@@ -66,5 +87,3 @@ def signup(request):
     # return render(request,'accounts/login.html')
 
 
-def profile(request):
-    return render(request,'accounts/profile.html')

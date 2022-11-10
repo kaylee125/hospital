@@ -3,10 +3,13 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from recommend.modules import inputs
 from haversine import haversine
-from recommend.models import HospitalInfo
+from recommend.models import HospitalInfo, RecHistory
 from django.db.models import Q
 import pandas as pd
 import json
+from datetime import date
+from accounts.forms import UserForm
+from django.contrib.auth import authenticate,login
 
 # Create your views here.
 
@@ -54,6 +57,19 @@ def check_dpt(request):
         if type(rec_dpt) is str :
             # 임의의 과 설정
             # rec_dpt = '정형외과'
+
+            #db저장:symptomtext,rec_dpt
+            if request.user.is_authenticated:
+                print(request.user.is_authenticated)
+                rec_his=RecHistory.objects.all()
+                rec_his.symtominput=symptomtext
+                rec_his.rec_dpt=rec_dpt
+                rec_his.id=request.user.id
+                input_date=date.today()
+                rec_his.input_date=input_date.isoformat()
+                print(rec_his)
+                rec_his.save()
+
 
             data = []
             cols = ['rec_dpt']
