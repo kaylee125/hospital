@@ -85,7 +85,16 @@
     var data = '{{ datas|safe }}';
     data_length = data.length
     console.log(data_length)
-    var json_data = JSON.parse(data); 
+    var json_data = JSON.parse(data);
+
+    // json 거리 가까운 순으로 오름 차순 정렬
+    function custonSort(a, b) {
+    if(a.dist == b.dist){ return 0} return  a.dist > b.dist ? 1 : -1;
+    }
+
+
+
+
     markers = new Array;
     if (data_length < 100 ) {
            
@@ -148,6 +157,10 @@
 
     } else {
 
+
+      // 사용자와 병원사이의 거리 오름차순 정렬
+      json_data.sort(custonSort);
+      console.log(json_data)
 
       // 추천과 출력
       document.getElementById('outputs').innerText = json_data[0].rec_dpt

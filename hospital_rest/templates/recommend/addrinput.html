@@ -25,14 +25,13 @@
                   <form method="post"  action="{% url 'recommend:recommend_hos' %}" id="addr_input">
                     {% csrf_token %}
                     <label for="browser"><i class="fa fa-map-marker" aria-hidden="true"></i>검색 반경 거리를 정해주세요.</label>
-                    <input list="browsers" name="usr_dist" id="browser">
-                      <datalist id="browsers">
-                        <option value="500m">
-                        <option selected value="2km">
-                        <option value="5km">
-                        <option value="10km">
-                        <option value="20km">
-                      </datalist>
+                      <select id="browsers" name="usr_dist" id="browser" >
+                        <option value="500m">500m</option>
+                        <option value="2km" selected>2km</option>
+                        <option value="5km">5km</option>
+                        <option value="10km">10km</option>
+                        <option value="20km">20km</option>
+                      </select>
                       <input type="hidden" id="usr_lat" name="usr_lat">
                       <input type="hidden" id="usr_lng" name="usr_lng">
                       <input type="hidden" id="rec_dpt" name="rec_dpt">

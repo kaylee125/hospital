@@ -101,6 +101,7 @@ def check_dpt(request):
             symptom_retry=symptom_retry.replace(']','').replace('[','').replace("'",'').split(',')
             return render(request,'recommend/symptomchoice.html',{'datas':symptom_retry,'fix_feature':fix_feature,'warn_text':warn_text})
         else:
+
             fix_feature =request.POST.get('fix_feature')
             symptom_list.append(fix_feature)
             symptomtext = ' '.join(symptom_list)
