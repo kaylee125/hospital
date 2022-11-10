@@ -18,10 +18,12 @@ def signup(request):
 
      #POST로 받았는데 유효성검사 결과 false인 경우 
     if not form.is_valid():
+        print(form)
         return render(request, 'accounts/signup.html', {'form': form})
 
     #POST로 정상적으로 데이터 받은 경우 db에 user정보 저장
     form.save()
+    print(form)
     username = form.cleaned_data.get('username')
     raw_password = form.cleaned_data.get('password1')
     #신규사용자인증 및 자동로그인 기능

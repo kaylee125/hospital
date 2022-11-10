@@ -2,16 +2,11 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-
+#UserForm: django.contrib.auth.forms 모듈의 UserCreationForm 클래스를 상속하여 만든 클래스
+#UserCreationForm의 속성: username,password1,password2 
 class UserForm(UserCreationForm):
-    id=forms.CharField(label='아이디'),
-    password=forms.CharField(label='비밀번호'),
-    email = forms.EmailField(label='이메일'),
-    gender=forms.CharField(label='성별'),
-    age=forms.CharField(label='나이대'),
-    addr_sigungu=forms.CharField(label='시군구주소')
+    # email = forms.EmailField(label='이메일')
 
     class Meta:
         model = User
-        fields = ['username', 'email']
-        #id, password, email,gender,age,addr_sigungu
+        fields = ("username", "password1", "password2")
