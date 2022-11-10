@@ -54,14 +54,14 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="list-group mt-0 pt-0">
-                      <button type="submit" class="list-group-item list-group-item-action active text-center mt-5" >당신의 진료 과목은?</button>
+                      <a class="list-group-item list-group-item-action active text-center mt-5" onClick="window.location.reload()" href="#" >선택지 새로고침</button>
                       <!-- <a href="#" class="list-group-item list-group-item-action active text-center mt-5"><b>당신의 진료 과목은?</b></a> -->
                       <a href="#" class="list-group-item list-group-item-action text-center">진료 과목</a>
                     </div>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-md-12"><a class="btn btn-primary ml-0 mt-2 mr-0 pr-0 w-100" href="#">병원 찾기</a></div>
+                  <div class="col-md-12"><button type="submit" class="btn btn-primary ml-0 mt-2 mr-0 pr-0 w-100" >진료과목 확인</button></div>
                 </div>
                 </form>
                 <div class="row">
@@ -119,6 +119,7 @@
   <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 20px;right:20px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:220px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;<img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16"></pingendo>
   <script type="text/javascript">
     
+    // 선택을 하난도 안할 경우 경고문 출력
     var data = '{{ warn_text }}';
 
       if (data == '아무것도 선택하지 않았습니다. 최소 1개 이상 선택 해야 합니다.') {

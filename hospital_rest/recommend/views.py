@@ -203,8 +203,8 @@ def recommend_hos(request):
 
         data = json.dumps(data,ensure_ascii=False)
         if json.loads(data) == [] :
-            data = rec_dpt
-
+            data = {"rec_dpt":rec_dpt,"usr_lat":usr_lat,"usr_lng":usr_lng}
+            data = json.dumps(data,ensure_ascii=False)
         # 판다스로 거리 오름차순 정렬
         # pd_data = pd.DataFrame(data).sort_values("dist")
 

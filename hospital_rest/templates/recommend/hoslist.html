@@ -17,7 +17,10 @@
         <div class="mx-auto col-md-12 py-4 px-0">
           <h2 class="mb-4"><i class="fa fa-user-md" aria-hidden="true"></i> 병원리스트</h2>
           <div class="row">
+            <form method="post" action="{% url 'recommend:check_dpt' %}" id="change_dist">
+              {% csrf_token %}
             <div class="col-md-6 mt-5" id="hos_list">
+            </form>
             <!-- 동적 자바스크립트로 병원리스트 뿌려주는 곳-->
             </div>
             <div class="col-md-6 mt-4">
@@ -79,20 +82,74 @@
     // views.py 로부터 데이터 가져와서 json객체로 만들기
     
     var data = '{{ datas|safe }}';
-    if (data.length < 15 ) {
+    data_length = data.length
+    console.log(data_length)
+    var json_data = JSON.parse(data); 
+    markers = new Array;
+    if (data_length < 100 ) {
+           
+      var dpt = json_data.rec_dpt
+      var lat = json_data.usr_lat
+      var lng = json_data.usr_lng
+      
+      // 병원과 출력
+      document.getElementById('outputs').innerText = dpt;
+
+
+      // 근처에 병원없음 알림 
       let tagArea = document.getElementById('hos_list');
-      let new_divNoHosTag = document.createElement('div');
-      new_divNoHosTag.setAttribute('class', 'col-md-4 my-2');
+      let new_divNoHosTag = document.createElement('h5');
+      // new_divNoHosTag.setAttribute('class', 'col-md-4 my-2');
       new_divNoHosTag.setAttribute('id', 'no_hos_text');
       tagArea.appendChild(new_divNoHosTag);
       document.getElementById('no_hos_text').innerText = "사용자의 위치 근처에 맞는 병원이 없습니다.";
+
+
+      // 카카오맵 생성
+      var container = document.getElementById('map');
+      var options = {
+        center: new kakao.maps.LatLng(lat, lng),
+        level: 5
+      };
+      
+      var map = new kakao.maps.Map(container, options);
+
+      // 내위치 마커 생성
+      let marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(lat, lng)
+        });
+      markers.push(marker)
+
+      // Marker 담을 클러스터 객체 생성
+      var clusterer = new kakao.maps.MarkerClusterer({
+      map: map,
+      markers: markers,
+      gridSize: 35,
+      averageCenter: true,
+      minLevel: 6,
+      disableClickZoom: true,
+      styles: [{
+          width : '53px', height : '52px',
+          background: 'url(cluster.png) no-repeat',
+          color: '#fff',
+          textAlign: 'center',
+          lineHeight: '54px'
+      }]
+      });
+      //내위치 메시지박스 출력
+      var infowindow = new kakao.maps.InfoWindow({
+          content : '<div style="padding:1px;">내위치</div>' // 인포윈도우에 표시할 내용
+      });
+
+      // 인포윈도우를 지도에 표시한다
+      infowindow.open(map, markers[0]);
       
 
     } else {
 
-      var json_data = JSON.parse(data);
+
       // 추천과 출력
-          document.getElementById('outputs').innerText = json_data[0].rec_dpt
+      document.getElementById('outputs').innerText = json_data[0].rec_dpt
       var container = document.getElementById('map');
       var options = {
         center: new kakao.maps.LatLng(json_data[0].usr_lat, json_data[0].usr_lng),
@@ -101,7 +158,7 @@
       
       var map = new kakao.maps.Map(container, options);
 
-      markers = new Array;
+      
 
       
 
