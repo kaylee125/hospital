@@ -141,25 +141,23 @@ def recommend_hos(request):
     if request.method == "POST":
         
         # 임의의 과 설정
-        
-        post_info = request.POST.get('info')
-        info_list = post_info.split(',')
         # 사용자 위경도
-        usr_lat = float(info_list[0])
-        usr_lng = float(info_list[1])
+        usr_lat = float(request.POST.get('usr_lat'))
+        usr_lng = float(request.POST.get('usr_lng'))
     
-        # # 사용자 거주동
-        usr_dong = []
-        # for info in info_list[2].split(' ') :
-        #     if "동" in info :
-        #         usr_dong.append(info)
-        # # 특정 좌표를 선택하지 않은 경우
-        if not usr_dong :
-            usr_dong.append('동')
-
-
         # 사용자가 추천받은과
-        rec_dpt = info_list[3]
+        rec_dpt = request.POST.get('rec_dpt')
+
+        # 사용자가 선택한 반경
+
+        usr_dist = int(request.POST.get('usr_dist').replace('km','').replace('m',''))
+        # 100보다 작으면 km로 계산해야한다.
+        if usr_dist < 100 :
+            usr_dist = usr_dist*1000
+        elif usr_dist == '':
+            usr_dist = 2000
+
+
 
         
         ##임의의 동이름 설정
@@ -168,12 +166,10 @@ def recommend_hos(request):
         # hos_db = HospitalInfo.objects.filter(medi_course__contains=rec_dpt and medi_course__contains=usr_dong[0])
         # 추천과에 맞는 리스트
         criterion1 = Q(medi_course__contains=rec_dpt)
-        # 내위치에 맞는 리스트
-        criterion2 = Q(addr__contains=usr_dong[0])
         # 위경도가 null 이 아닌 리스트
-        criterion3 = Q(longitude__isnull=False)
+        criterion2 = Q(longitude__isnull=False)
         # 추천과 and 위치 만족하는 DB 행들의 모임
-        hos_db = HospitalInfo.objects.filter(criterion1 & criterion2 & criterion3)
+        hos_db = HospitalInfo.objects.filter(criterion1 & criterion2)
 
         cols = ['hos_id','hos_name','dist','hos_lat','hos_lng','rec_dpt','usr_lat','usr_lng']
         data = []
@@ -187,7 +183,7 @@ def recommend_hos(request):
 
             # 직선거리
             dist = round(haversine(my_tus,hos_tus, unit='m'))
-            if dist < 2000 :
+            if dist < usr_dist :
 
                 rows.append(hos.hos_id)
                 rows.append(hos.hos_name)
