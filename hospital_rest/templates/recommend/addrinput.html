@@ -22,11 +22,27 @@
               <div class="row mt-5"></div>
               <div class="row">
                 <div class="col-md-6">
-                  <h5 class="text-center"><i class="fa fa-map-marker" aria-hidden="true"></i> 내 위치를 전송합니다</h5>
+                  <form method="post"  action="{% url 'recommend:recommend_hos' %}" id="addr_input">
+                    {% csrf_token %}
+                    <label for="browser"><i class="fa fa-map-marker" aria-hidden="true"></i>검색 반경 거리를 정해주세요.</label>
+                      <select id="browsers" name="usr_dist" id="browser" >
+                        <option value="500m">500m</option>
+                        <option value="2km" selected>2km</option>
+                        <option value="5km">5km</option>
+                        <option value="10km">10km</option>
+                        <option value="20km">20km</option>
+                      </select>
+                      <input type="hidden" id="usr_lat" name="usr_lat">
+                      <input type="hidden" id="usr_lng" name="usr_lng">
+                      <input type="hidden" id="rec_dpt" name="rec_dpt">
+                      
+                      <button class="btn btn-info" type="submit" >전송</button>
+                    <div class="col-md-6">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                   <div class="row">
-                    <div class="col-md-6"><a class="btn btn-info" href="#">전송</a></div>
+
+                </div>
                     <div class="col-md-6"></div>
                   </div>
                 </div>
@@ -69,7 +85,8 @@
                 <div class="col-md-6">
                   <div class="row">
                     <div class="col-md-6">
-                      <a href="#" va class="btn btn-info mx-0 px-4" onclick="javascript:page_move('url', 'foobar');">확인</a></div>
+                      <button type="submit" class="btn btn-info mx-0 px-4" >확인</button></div>
+                    </form>
                   </div>
                 </div>
               </div>
@@ -189,7 +206,6 @@
   <script src="{% static 'js/smooth-scroll.js' %}"></script>
   <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 20px;right:20px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:220px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;<img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16"></pingendo>
 </div>
-{% csrf_token %}
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=89b0541f03013f5b0f1f1170d8eb4f37&libraries=services,clusterer,drawing"></script>
 	<script>
     var data = '{{ datas|safe }}';
@@ -207,11 +223,17 @@ function currentLocation() {
 
 			first_lat = position.coords.latitude, // 위도
 			first_lon = position.coords.longitude; // 경도
-			// my_lat = first_lat;
-			// my_lng = first_lon;
-			// document.getElementById("my_lat").value = my_lat;
-			// document.getElementById("my_lng").value = my_lng;
 
+      // hidden 태그에 추천과, 사용자의 위경도 POST에 담아서 같이 보내주기
+      document.getElementById('rec_dpt').value = json_data[0].rec_dpt
+      // 위경도는 사용자의 보정여부를 따져보아야한다.
+      if (my_lat == '') {
+        document.getElementById('usr_lat').value = first_lat
+        document.getElementById('usr_lng').value = first_lon
+      } else {
+        document.getElementById('usr_lat').value = my_lat
+        document.getElementById('usr_lng').value = my_lng
+      }
 
 
 			var locPosition = new kakao.maps.LatLng(first_lat, first_lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
@@ -305,56 +327,15 @@ kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
     // infowindow.removeMarkers(marker_origin);
 	my_lat = latlng.getLat();
 	my_lng = latlng.getLng();
-  loc = String(my_lat)+ ',' +String(my_lng);
-
+ 
   
 });
 
-  // a 태그 post로 넘기기
-  function page_move(url, some_data) {
-        
-        var form = document.createElement("form");
-        var parm = new Array();
-        var input = new Array();
-        var loc_input = new Array();
 
-        form.action = "{% url 'recommend:recommend_hos' %}";
-        form.method = "post";
+
+
+
  
-
-
-        parm.push( ['some_key1', 'some_value1'] );
-        parm.push( ['some_key2', 'some_value2'] );
-        parm.push( ['some_data', some_data] );
-
-
-        for (var i = 0; i < parm.length; i++) {
-            input[i] = document.createElement("input");
-            input[i].setAttribute("type", "hidden");
-            input[i].setAttribute('name', parm[i][0]);
-            input[i].setAttribute("value", parm[i][1]);
-            form.appendChild(input[i]);
-        }
-  
-        
-        if (my_lat == '') {
-          loc = String(first_lat)+ ',' +String(first_lon);
-          my_addr = '없는주소'
-          console.log(loc)
-        }
-        info = loc + ',' + my_addr + ',' + json_data[0].rec_dpt
-        
-        loc_input = document.createElement("input");
-        loc_input.setAttribute("type", "hidden");
-        loc_input.setAttribute('name','info');
-        loc_input.setAttribute('value',info);
-        form.appendChild(loc_input);
-
-        
-        document.body.appendChild(form);
-        form.submit();
-    }
-
 
 
 function getCookie(name) {

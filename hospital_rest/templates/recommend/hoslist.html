@@ -17,13 +17,14 @@
         <div class="mx-auto col-md-12 py-4 px-0">
           <h2 class="mb-4"><i class="fa fa-user-md" aria-hidden="true"></i> 병원리스트</h2>
           <div class="row">
-            <form method="post" action="{% url 'recommend:check_dpt' %}" id="change_dist">
+            <form method="post" action="{% url 'recommend:check_dpt' %}" id="change_dist" style="width: 30%;">
               {% csrf_token %}
-            <div class="col-md-6 mt-5" id="hos_list">
+            <div class="col-md-7 mt-5" id="hos_list" >
+            </div>
             </form>
             <!-- 동적 자바스크립트로 병원리스트 뿌려주는 곳-->
-            </div>
-            <div class="col-md-6 mt-4">
+        
+            <div class="col-md-7 mt-4">
               <div id='map' style="width:100%;height:400px;" ></div>
             </div>
           </div>
@@ -84,7 +85,16 @@
     var data = '{{ datas|safe }}';
     data_length = data.length
     console.log(data_length)
-    var json_data = JSON.parse(data); 
+    var json_data = JSON.parse(data);
+
+    // json 거리 가까운 순으로 오름 차순 정렬
+    function custonSort(a, b) {
+    if(a.dist == b.dist){ return 0} return  a.dist > b.dist ? 1 : -1;
+    }
+
+
+
+
     markers = new Array;
     if (data_length < 100 ) {
            
@@ -148,12 +158,16 @@
     } else {
 
 
+      // 사용자와 병원사이의 거리 오름차순 정렬
+      json_data.sort(custonSort);
+      console.log(json_data)
+
       // 추천과 출력
       document.getElementById('outputs').innerText = json_data[0].rec_dpt
       var container = document.getElementById('map');
       var options = {
         center: new kakao.maps.LatLng(json_data[0].usr_lat, json_data[0].usr_lng),
-        level: 5
+        level: 7
       };
       
       var map = new kakao.maps.Map(container, options);

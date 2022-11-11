@@ -141,11 +141,23 @@ class HospitalInfo(models.Model):
 
 class RecHistory(models.Model):
     rh_key = models.BigAutoField(primary_key=True)
-    id = models.ForeignKey(AuthUser, models.DO_NOTHING, db_column='id')
-    symtominput = models.CharField(max_length=4000, blank=True, null=True)
+    username = models.ForeignKey(AuthUser,on_delete= models.CASCADE, db_column='username', to_field='username', blank=True, null=True)
+    symptominput = models.CharField(max_length=4000, blank=True, null=True)
     rec_dpt = models.CharField(max_length=100, blank=True, null=True)
     input_date = models.CharField(max_length=100, blank=True, null=True)
+    select_symptom = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'rec_history'
+
+class UserHistory(models.Model):
+    rh_key = models.BigAutoField(primary_key=True)
+    username = models.ForeignKey(AuthUser, models.DO_NOTHING, db_column='username', to_field='username', blank=True, null=True)
+    symptominput = models.CharField(max_length=4000, blank=True, null=True)
+    rec_dpt = models.CharField(max_length=100, blank=True, null=True)
+    input_date = models.CharField(max_length=100, blank=True, null=True)
+    select_symptom = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'user_history'

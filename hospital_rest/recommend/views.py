@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from recommend.modules import inputs
 from haversine import haversine
-from recommend.models import HospitalInfo, RecHistory
+from recommend.models import HospitalInfo, RecHistory, AuthUser, UserHistory
 from django.db.models import Q
 import pandas as pd
 import json
@@ -60,15 +60,26 @@ def check_dpt(request):
 
             #db저장:symptomtext,rec_dpt
             if request.user.is_authenticated:
-                print(request.user.is_authenticated)
-                rec_his=RecHistory.objects.all()
-                rec_his.symtominput=symptomtext
+
+                rec_his=UserHistory()
+                rec_his.symptominput=symptomtext
                 rec_his.rec_dpt=rec_dpt
-                rec_his.id=request.user.id
+
+                user_info = AuthUser.objects.filter(username = request.user)[0]
+                rec_his.username = user_info
                 input_date=date.today()
                 rec_his.input_date=input_date.isoformat()
-                print(rec_his)
                 rec_his.save()
+
+                
+                data = []
+                cols = ['rec_dpt']
+                rows = []
+                rows.append(rec_dpt)
+                tmp = dict(zip(cols,rows))
+                data.append(tmp)
+                data = json.dumps(data,ensure_ascii=False)
+                return render(request,'recommend/addrinput.html',{'datas':data})
 
 
             data = []
@@ -101,12 +112,13 @@ def check_dpt(request):
             # return redirect('/recommend/symptominput')
         # 피쳐 선정으로 가야 하는 경우
         elif type(rec_dpt) is list :
+
             fix_feature = rec_dpt[-1]
             choice = rec_dpt[:6]
-            return render(request,'recommend/symptomchoice.html',{'datas':choice,'fix_feature':fix_feature})
+            return render(request,'recommend/symptomchoice.html',{'datas':choice,'fix_feature':fix_feature,'symptomtext_origin':symptomtext})
 
     elif (request.method == "POST") & (type(request.POST.getlist('symptom_selected')) is list ) :
-
+        symptomtext_origin = request.POST.get('symptomtext_origin')
         symptom_list = request.POST.getlist('symptom_selected')
         # 사용자가 선택항목에서 아무것도 선택하지 않고 진료과목 확인 클릭한 경우 다시 선택하게끔 하는 코드
         # 이 경우 사용자에게 선택하지 않았음을 경고 해줘야 한다.
@@ -117,6 +129,7 @@ def check_dpt(request):
             symptom_retry=symptom_retry.replace(']','').replace('[','').replace("'",'').split(',')
             return render(request,'recommend/symptomchoice.html',{'datas':symptom_retry,'fix_feature':fix_feature,'warn_text':warn_text})
         else:
+
             fix_feature =request.POST.get('fix_feature')
             symptom_list.append(fix_feature)
             symptomtext = ' '.join(symptom_list)
@@ -125,14 +138,14 @@ def check_dpt(request):
             #db저장
             if request.user.is_authenticated:
 
-                print(request.user.is_authenticated)
-                rec_his=RecHistory.objects.all()
-                rec_his.symtominput=symptomtext
+                rec_his=UserHistory()
+                rec_his.select_symptom= ' '.join(symptom_list[:-1])
                 rec_his.rec_dpt=rec_dpt
-                rec_his.id=request.user.id
+                rec_his.symptominput = symptomtext_origin
+                user_info = AuthUser.objects.filter(username = request.user)[0]
+                rec_his.username = user_info
                 input_date=date.today()
                 rec_his.input_date=input_date.isoformat()
-                print(rec_his)
                 rec_his.save()
                 
                 data = []
@@ -181,25 +194,23 @@ def recommend_hos(request):
     if request.method == "POST":
         
         # 임의의 과 설정
-        
-        post_info = request.POST.get('info')
-        info_list = post_info.split(',')
         # 사용자 위경도
-        usr_lat = float(info_list[0])
-        usr_lng = float(info_list[1])
+        usr_lat = float(request.POST.get('usr_lat'))
+        usr_lng = float(request.POST.get('usr_lng'))
     
-        # # 사용자 거주동
-        usr_dong = []
-        # for info in info_list[2].split(' ') :
-        #     if "동" in info :
-        #         usr_dong.append(info)
-        # # 특정 좌표를 선택하지 않은 경우
-        if not usr_dong :
-            usr_dong.append('동')
-
-
         # 사용자가 추천받은과
-        rec_dpt = info_list[3]
+        rec_dpt = request.POST.get('rec_dpt')
+
+        # 사용자가 선택한 반경
+
+        usr_dist = int(request.POST.get('usr_dist').replace('km','').replace('m',''))
+        # 100보다 작으면 km로 계산해야한다.
+        if usr_dist < 100 :
+            usr_dist = usr_dist*1000
+        elif usr_dist == '':
+            usr_dist = 2000
+
+
 
         
         ##임의의 동이름 설정
@@ -208,12 +219,10 @@ def recommend_hos(request):
         # hos_db = HospitalInfo.objects.filter(medi_course__contains=rec_dpt and medi_course__contains=usr_dong[0])
         # 추천과에 맞는 리스트
         criterion1 = Q(medi_course__contains=rec_dpt)
-        # 내위치에 맞는 리스트
-        criterion2 = Q(addr__contains=usr_dong[0])
         # 위경도가 null 이 아닌 리스트
-        criterion3 = Q(longitude__isnull=False)
+        criterion2 = Q(longitude__isnull=False)
         # 추천과 and 위치 만족하는 DB 행들의 모임
-        hos_db = HospitalInfo.objects.filter(criterion1 & criterion2 & criterion3)
+        hos_db = HospitalInfo.objects.filter(criterion1 & criterion2)
 
         cols = ['hos_id','hos_name','dist','hos_lat','hos_lng','rec_dpt','usr_lat','usr_lng']
         data = []
@@ -227,7 +236,7 @@ def recommend_hos(request):
 
             # 직선거리
             dist = round(haversine(my_tus,hos_tus, unit='m'))
-            if dist < 2000 :
+            if dist < usr_dist :
 
                 rows.append(hos.hos_id)
                 rows.append(hos.hos_name)
