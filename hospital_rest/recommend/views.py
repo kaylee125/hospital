@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from recommend.modules import inputs
 from haversine import haversine
-from recommend.models import HospitalInfo, RecHistory
+from recommend.models import HospitalInfo, RecHistory, AuthUser, UserHistory
 from django.db.models import Q
 import pandas as pd
 import json
@@ -60,15 +60,26 @@ def check_dpt(request):
 
             #db저장:symptomtext,rec_dpt
             if request.user.is_authenticated:
-                print(request.user.is_authenticated)
-                rec_his=RecHistory.objects.all()
-                rec_his.symtominput=symptomtext
+
+                rec_his=UserHistory()
+                rec_his.symptominput=symptomtext
                 rec_his.rec_dpt=rec_dpt
-                rec_his.id=request.user.id
+
+                user_info = AuthUser.objects.filter(username = request.user)[0]
+                rec_his.username = user_info
                 input_date=date.today()
                 rec_his.input_date=input_date.isoformat()
-                print(rec_his)
                 rec_his.save()
+
+                
+                data = []
+                cols = ['rec_dpt']
+                rows = []
+                rows.append(rec_dpt)
+                tmp = dict(zip(cols,rows))
+                data.append(tmp)
+                data = json.dumps(data,ensure_ascii=False)
+                return render(request,'recommend/addrinput.html',{'datas':data})
 
 
             data = []
@@ -101,12 +112,13 @@ def check_dpt(request):
             # return redirect('/recommend/symptominput')
         # 피쳐 선정으로 가야 하는 경우
         elif type(rec_dpt) is list :
+
             fix_feature = rec_dpt[-1]
             choice = rec_dpt[:6]
-            return render(request,'recommend/symptomchoice.html',{'datas':choice,'fix_feature':fix_feature})
+            return render(request,'recommend/symptomchoice.html',{'datas':choice,'fix_feature':fix_feature,'symptomtext_origin':symptomtext})
 
     elif (request.method == "POST") & (type(request.POST.getlist('symptom_selected')) is list ) :
-
+        symptomtext_origin = request.POST.get('symptomtext_origin')
         symptom_list = request.POST.getlist('symptom_selected')
         # 사용자가 선택항목에서 아무것도 선택하지 않고 진료과목 확인 클릭한 경우 다시 선택하게끔 하는 코드
         # 이 경우 사용자에게 선택하지 않았음을 경고 해줘야 한다.
@@ -126,14 +138,14 @@ def check_dpt(request):
             #db저장
             if request.user.is_authenticated:
 
-                print(request.user.is_authenticated)
-                rec_his=RecHistory.objects.all()
-                rec_his.symtominput=symptomtext
+                rec_his=UserHistory()
+                rec_his.select_symptom= ' '.join(symptom_list[:-1])
                 rec_his.rec_dpt=rec_dpt
-                rec_his.id=request.user.id
+                rec_his.symptominput = symptomtext_origin
+                user_info = AuthUser.objects.filter(username = request.user)[0]
+                rec_his.username = user_info
                 input_date=date.today()
                 rec_his.input_date=input_date.isoformat()
-                print(rec_his)
                 rec_his.save()
                 
                 data = []
