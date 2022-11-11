@@ -20,16 +20,14 @@ class KakaoMap:
     def extract_data(cls):
         #병원데이터에서 전화번호만 추출
         df = get_spark_session().read.csv(cls.READ_DIR, encoding='cp949', header=True)
-        # sigungu_list=list(df.select(col('시군명')).distinct().toPandas())
-        # print(sigungu_list)
-      
         new_df=df[df['통합영업상태명']=='영업/정상']
         tel=new_df.select('소재지시설전화번호')
         tel_list=list(tel.toPandas()['소재지시설전화번호'])
         # print(len(tel_list)) #15653
 
         #리스트 분할함수
-        #나누고 싶은 리스트와 몇개씩 분할 할것인지만 넣어주면, 원하는 길이로 리스트를 나눠서 하나의 리스트로 묶어 반환
+        #나누고 싶은 리스트와 몇개씩 분할 할것인지만 넣어주면, 원하는 길이로 
+        # 리스트를 나눠서 하나의 리스트로 묶어 반환
         def list_chunk(lst, n):
             return [lst[i:i+n] for i in range(0, len(lst), n)]
 
