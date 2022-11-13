@@ -5,9 +5,9 @@ from collections import Counter
 from konlpy.tag import Okt
 import random
 import joblib
-# from joblib import dump, load
+
 from lightgbm import LGBMClassifier
-from hanspell import spell_checker
+
 # 불용어사전
 def return_stops():
     f_total = open('/home/worker/project/hospital_rest/recommend/학습자연어_불용어/통합불용어진행중_원.txt','r',encoding='UTF-8').read()
@@ -21,6 +21,7 @@ def return_stops():
 
 # 표제어 변환
 def return_text_replaced(x):
+    
     for i in range(len(x)):
         if x[i] == '속이':
             x[i] = '속'
@@ -34,22 +35,41 @@ def return_text_replaced(x):
             x[i] = '포경수술'
         if x[i] == '냉이':
             x[i] = '냉'
+        if x[i] == '코골':
+            x[i] = '코골이'
+        if x[i] == '마렵':
+            x[i] = '마렵다'
+        if x[i] == '마려워':
+            x[i] = '마렵다'
+        if x[i] == '저리':
+            x[i] = '저리다'
+        if x[i] == '보이':
+            x[i] = '보이다'
+        if x[i] == '자고':
+            x[i] = '자다'
+        if x[i] == '가렵':
+            x[i] = '가렵다'
+        if x[i] == '살이':
+            x[i] = '살'
+        if x[i] == '가렵':
+            x[i] = '가렵다'
     return x
 
 # 컬럼들 가져오기(피처)
-f = open('/home/worker/project/hospital_rest/recommend/x_cols.txt','r',encoding='UTF-8').read()
+f = open('/home/worker/project/hospital_rest/recommend/cols_50.txt','r',encoding='utf-8').read()
 X_columns = f.split('\n')
 X_columns = X_columns[:-1]
 
 
 
 # 모델
-gbm_pickle = joblib.load('/home/worker/project/hospital_rest/recommend/lgb.pkl')
+logis_pickle = joblib.load('/home/worker/project/hospital_rest/recommend/logistic_7132.pkl')
 
 # 각 진료과별 피처 array 형태
 
 def return_features():
-    feats = pd.read_csv('/home/worker/project/hospital_rest/recommend/feats.csv',index_col=0)
+    feats = pd.read_csv('/home/worker/project/hospital_rest/recommend/feats_50.csv',index_col=0)
+    print
     feats = feats.values
     return feats
 
@@ -91,45 +111,6 @@ def input_text(text):
 
 # 들어온 문장이 피처 1개만 포함한다면 그 피처와 관련된 진료과목들의 피처들을
 # 랜덤으로 뽑아서 6개만 리스트로 돌려주는 함수
-# def return_question(input_list):
-#     feat_out = []
-#     nonnull = []
-#     text= []
-#     question_lists = []
-#     apeen = []
-#     feats = return_features()
-#     for i in range(len(input_list)):
-#         if input_list[i][0] != 0:
-#             text.append(X_columns[i])
-#     # input_lists에서 0 이 아닌 것의 텍스트를 가져오기
-
-#     for i in range(len(feats)):
-#         if text in feats[i]:
-#             feat_out.append(feats[i])
-
-#     for i in feat_out:
-#         for j in i:
-#             apeen.append(j)
-#     tfidf_lists = list(set(apeen))
-
-#     if '0' in tfidf_lists:
-#         tfidf_lists.remove('0')
-
-#     ou = [X_columns.index(i) for i in tfidf_lists]
-
-#     random.shuffle(ou)
-#     indexes = random.sample(ou, 6)
-#     for i in range(len(input_list)):
-#         if input_list[i][0] != 0:
-#             nonnull.append(i)
-#     for i in indexes:
-#         if i in nonnull:
-#             indexes.remove(i)
-#     for i in indexes:
-#         question_lists.append(X_columns[i])
-
-#     return question_lists.append(X_columns[i])
-
 def return_question(input_list):
     feat_out = []
     nonnull = []
@@ -150,14 +131,22 @@ def return_question(input_list):
         for j in i:
             apeen.append(j)
     tfidf_lists = list(set(apeen))
+    ##
+    # f_num = len(tfidf_lists)
+    # f_num_per = 0
+    # if f_num > 10:
+    #     f_num_per = 10
+    # else:
+        
+    #     f_num_per = len(tfidf_lists)
 
     if '0' in tfidf_lists:
         tfidf_lists.remove('0')
 
     ou = [X_columns.index(i) for i in tfidf_lists]
-
+    
     random.shuffle(ou)
-    indexes = random.sample(ou, 6)
+    indexes = random.sample(ou, 10)
     for i in range(len(input_list)):
         if input_list[i][0] != 0:
             nonnull.append(i)
@@ -192,14 +181,11 @@ def outputs(lists):
         input_list = pd.DataFrame(lists)
         input_list = input_list.T
         input_list.columns = X_columns
-        lgb_pred = gbm_pickle.predict(input_list)
+        logis_pred = logis_pickle.predict(input_list)
 
-        return lgb_pred[0]
+        return logis_pred[0]
 
-# 예시:::: 웹에서 가져오는 텍스트 임
-# text = input('증상을 입력해보세요 : ')
 
-# 들어온 text 형태에 따라 ??
 
 def inputs(text,sel):
 
@@ -217,12 +203,11 @@ def inputs(text,sel):
         return result_recommended
         
 
-# 맞춤법검사
-def gyojeong(text):
-    try:
-        result_train = spell_checker.check(text)
-        text = result_train.as_dict()['checked']
 
-    except:
-        pass
-    return text
+
+
+
+
+
+
+

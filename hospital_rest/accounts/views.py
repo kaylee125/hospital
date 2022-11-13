@@ -6,6 +6,8 @@ from accounts.forms import UserForm
 from django.contrib.auth import authenticate,login
 from django.http import HttpResponse
 
+from recommend.models import UserHistory
+
 #회원가입
 def signup(request):
 
@@ -40,13 +42,17 @@ def profile(request):
     
         return render(request,'accounts/profile.html',userinfo)
 
+def my_record(request):
     #나의 기록 확인하기
-    if request.method=="POST":
-        rec_dpt='정형외과'
-        symptomtext='머리가 아프고 울렁거려요'
-        form={'rec_dpt':rec_dpt,'symptomtext':symptomtext}
+    if request.method=="GET":
+        rec_his = UserHistory.objects.filter(username='ybw123')
+        # rec_dpt=rec_his.rec_dpt
+        # symptomtext=rec_his.symptominput
+        # input_date=rec_his.input_date
+       
+        # form={'rec_dpt':rec_dpt,'symptomtext':symptomtext,'input_date':input_date}
 
-        return render(request,'accounts/profile.html',form)
+        return render(request,'accounts/my_record.html',{'forms':rec_his})
 
 
     #진료과 찾기

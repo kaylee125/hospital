@@ -117,6 +117,7 @@ def check_dpt(request):
 
             fix_feature = rec_dpt[-1]
             choice = rec_dpt[:6]
+            print(fix_feature,choice)
             return render(request,'recommend/symptomchoice.html',{'datas':choice,'fix_feature':fix_feature,'symptomtext_origin':symptomtext})
 
     elif (request.method == "POST") & (type(request.POST.getlist('symptom_selected')) is list ) :
