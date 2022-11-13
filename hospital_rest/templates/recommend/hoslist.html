@@ -16,16 +16,26 @@
       <div class="row">
         <div class="mx-auto col-md-12 py-4 px-0">
           <h2 class="mb-4"><i class="fa fa-user-md" aria-hidden="true"></i> 병원리스트</h2>
+          <h2 class="mb-4" id="no_hospital"></h2>
           <div class="row">
-            <form method="post" action="{% url 'recommend:check_dpt' %}" id="change_dist" style="width: 30%;">
+            
+            <form method="post" action="{% url 'recommend:check_dpt' %}" id="change_dist" style="width: 100%;display: inline-flex;">
+              
               {% csrf_token %}
-            <div class="col-md-7 mt-5" id="hos_list" >
-            </div>
+            <table class="table table-hover" style="margin-right: 15px;height: 400px;">
+              <thead>
+                <tr>
+                  <th scope="col">병원명</th>
+                  <th scope="col">거리(m)</th>
+                </tr>
+              </thead>
+              <tbody id="hospital_list" style="display: block;max-height:350px;width: 130%;">
+              </tbody>
+            </table>
+            <div id='map' style="width:100%;height:400px;display:inline;" ></div>
             </form>
-            <!-- 동적 자바스크립트로 병원리스트 뿌려주는 곳-->
-        
             <div class="col-md-7 mt-4">
-              <div id='map' style="width:100%;height:400px;" ></div>
+              
             </div>
           </div>
         </div>
@@ -107,7 +117,7 @@
 
 
       // 근처에 병원없음 알림 
-      let tagArea = document.getElementById('hos_list');
+      let tagArea = document.getElementById('no_hospital');
       let new_divNoHosTag = document.createElement('h5');
       // new_divNoHosTag.setAttribute('class', 'col-md-4 my-2');
       new_divNoHosTag.setAttribute('id', 'no_hos_text');
@@ -173,72 +183,43 @@
       var map = new kakao.maps.Map(container, options);
 
       
-
       
-
-      
-
-
-
 
       // 병원 리스트 JS 동적 생성
-      let tagArea = document.getElementById('hos_list');
-
-      for (let index = 1; index < 6; index++) {
-
-        let new_divRowTag = document.createElement('div');
-        let new_divColTag = document.createElement('div');
-        let new_divLastTag = document.createElement('div');
-        let new_hNameTag = document.createElement('h5');
-        let new_hDistTag = document.createElement('h5');
-        let new_aTag = document.createElement('a');
+      var targetTbody = document.getElementById('hospital_list');
+      document.getElementById('hospital_list').style.overflow='auto';
+      for (let index = 1; index <50; index++) {
 
 
         
-        new_divRowTag.setAttribute('class', 'row');
-        new_divColTag.setAttribute('class', 'col-md-7 my-2');
-        new_divLastTag.setAttribute('class', 'col-md-4 my-2');
+        let new_trTag = document.createElement('tr');
+        let new_tdHosTag = document.createElement('td');
+        let new_aHrefTag = document.createElement('a');
+        let new_tdDistTag = document.createElement('td');
+
+        targetTbody.appendChild(new_trTag);
+        new_trTag.appendChild(new_tdHosTag);
+        new_tdHosTag.appendChild(new_aHrefTag);
+        new_trTag.appendChild(new_tdDistTag);
 
 
         
-        new_divRowTag.setAttribute('id', 'row_div_'+String(index));
-        new_divColTag.setAttribute('id', 'name_div_'+String(index));
-        new_divLastTag.setAttribute('id', 'dist_div_'+String(index));
-        new_hNameTag.setAttribute('id', 'hos_name_'+String(index));
-        new_hDistTag.setAttribute('id', 'dist_'+String(index));
-        new_divRowTag.setAttribute('style', 'cursor: pointer;');
-        new_divRowTag.setAttribute('onclick', "location.href='" + 
+        new_trTag.setAttribute('id', 'hos_'+String(index));
+        new_tdHosTag.setAttribute('id', 'hos_name_'+String(index));
+        new_tdHosTag.setAttribute('style','width:89%')
+        new_tdDistTag.setAttribute('id', 'dist_'+String(index));
+        new_aHrefTag.setAttribute('id','href_'+String(index));
+        new_aHrefTag.setAttribute('style',"cursor: pointer;color:black;");
+        new_aHrefTag.setAttribute('href',
           "/recommend/hosinfo/" + 
           json_data[index-1].rec_dpt + '&' + 
           String(json_data[index-1].usr_lat) + '&' + 
           String(json_data[index-1].usr_lng) +
           "/" + 
-          String(json_data[index-1].hos_id) + 
-          "'");
+          String(json_data[index-1].hos_id));
         
-        new_hNameTag.innerHTML = json_data[index-1].hos_name ;
-        new_hDistTag.innerHTML = String(json_data[index-1].dist) + "m" ;
-
-    
-        tagArea.appendChild(new_divRowTag);
-    
-
-        let target_row_div = document.getElementById('row_div_'+String(index));
-
-        target_row_div.appendChild(new_divColTag);
-        target_row_div.appendChild(new_divLastTag);
-        target_row_div.appendChild(new_aTag);
-
-        let target_name_div = document.getElementById("name_div_"+String(index));
-        let target_dist_div = document.getElementById('dist_div_'+String(index));
-        let target_name_h = document.getElementById('hos_name_'+String(index));
-        let target_dist_h = document.getElementById('dist_'+String(index));
-        
-        target_name_div.appendChild(new_hNameTag);
-        target_dist_div.appendChild(new_hDistTag);
-
-        document.getElementById("hos_name_"+String(index)).innerHTML = json_data[index-1].hos_name
-        document.getElementById("dist_"+String(index)).innerHTML = String(json_data[index-1].dist) + "m"
+      new_aHrefTag.innerHTML = json_data[index-1].hos_name ;
+        new_tdDistTag.innerHTML = json_data[index-1].dist;
         
 
 
@@ -256,7 +237,7 @@
       markers.push(marker)
 
       // 병원 markers 생성    
-      for (let index = 1; index < 6; index++) {
+      for (let index = 1; index < 50; index++) {
         let marker = new kakao.maps.Marker({
         position: new kakao.maps.LatLng( json_data[index-1].hos_lat, json_data[index-1].hos_lng )
         });
@@ -290,7 +271,7 @@
 
 
       // 병원 인포윈도우 표시
-      for (let index = 1; index < 6; index++) {
+      for (let index = 1; index < 50; index++) {
 
         //내위치 메시지박스 출력
         var infowindow = new kakao.maps.InfoWindow({

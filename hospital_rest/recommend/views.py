@@ -10,6 +10,7 @@ import json
 from datetime import date
 from accounts.forms import UserForm
 from django.contrib.auth import authenticate,login
+import time
 
 # Create your views here.
 
@@ -49,8 +50,9 @@ def symptom_choice(request):
 def check_dpt(request):
     if (request.method == "POST") & (type(request.POST.get('symptomtext')) is str ):
         symptomtext=request.POST.get('symptomtext')
+        start = time.time()
         rec_dpt=inputs(symptomtext,1)
-
+        print("time :", time.time() - start)
         
         
         # 추천과가 나온 경우
@@ -268,7 +270,7 @@ def recommend_hos(request):
 #template파일에 데이터 넣어줌
 
 def hos_info(request,get_param,param):
-
+    
     data = HospitalInfo.objects.filter(hos_id=param)
     # 추천과 
     get_param = get_param.split('&')
