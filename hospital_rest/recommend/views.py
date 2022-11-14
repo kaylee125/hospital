@@ -86,10 +86,10 @@ def check_dpt(request):
 
             ##로그인이 안된 경우도 데이터수집이 필요함
             rec_his=UserHistory()
-            rec_his.select_symptom= ' '.join(symptom_list[:-1])
+            rec_his.symptominput=symptomtext
             rec_his.rec_dpt=rec_dpt
-            rec_his.symptominput = symptomtext_origin
-            user_info = AuthUser.objects.filter(username = 'guest1234')[0]
+
+            user_info = AuthUser.objects.filter(username = "guest1234")[0]
             rec_his.username = user_info
             input_date=timezone.localtime().strftime("%Y-%m-%d, %H:%M:%S, %a")
             rec_his.input_date=input_date
@@ -127,7 +127,10 @@ def check_dpt(request):
             # return redirect('/recommend/symptominput')
         # 피쳐 선정으로 가야 하는 경우
         elif type(rec_dpt) is list :
-            print(rec_dpt)
+            
+            if request.user.is_staff:
+                print('관리자확인')
+
             fix_feature = rec_dpt[-1]
             choice_1 = rec_dpt[:5]
             choice_2 = rec_dpt[5:10]
