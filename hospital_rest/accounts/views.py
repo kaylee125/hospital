@@ -45,7 +45,7 @@ def profile(request):
 def my_record(request):
     #나의 기록 확인하기
     if request.method=="GET":
-        rec_his = UserHistory.objects.filter(username='ybw123')
+        rec_his = UserHistory.objects.filter(username=request.user.username)
         # rec_dpt=rec_his.rec_dpt
         # symptomtext=rec_his.symptominput
         # input_date=rec_his.input_date
