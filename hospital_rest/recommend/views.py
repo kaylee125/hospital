@@ -10,6 +10,8 @@ import json
 from datetime import date
 from accounts.forms import UserForm
 from django.contrib.auth import authenticate,login
+from django.utils import timezone
+import time
 
 # Create your views here.
 
@@ -49,8 +51,9 @@ def symptom_choice(request):
 def check_dpt(request):
     if (request.method == "POST") & (type(request.POST.get('symptomtext')) is str ):
         symptomtext=request.POST.get('symptomtext')
+        start = time.time()
         rec_dpt=inputs(symptomtext,1)
-
+        print("time :", time.time() - start)
         
         
         # 추천과가 나온 경우
@@ -67,8 +70,8 @@ def check_dpt(request):
 
                 user_info = AuthUser.objects.filter(username = request.user)[0]
                 rec_his.username = user_info
-                input_date=date.today()
-                rec_his.input_date=input_date.isoformat()
+                input_date=timezone.localtime().strftime("%Y-%m-%d, %H:%M:%S, %a")
+                rec_his.input_date=input_date
                 rec_his.save()
 
                 
@@ -80,6 +83,18 @@ def check_dpt(request):
                 data.append(tmp)
                 data = json.dumps(data,ensure_ascii=False)
                 return render(request,'recommend/addrinput.html',{'datas':data})
+
+            ##로그인이 안된 경우도 데이터수집이 필요함
+            rec_his=UserHistory()
+            rec_his.select_symptom= ' '.join(symptom_list[:-1])
+            rec_his.rec_dpt=rec_dpt
+            rec_his.symptominput = symptomtext_origin
+            user_info = AuthUser.objects.filter(username = 'guest1234')[0]
+            rec_his.username = user_info
+            input_date=timezone.localtime().strftime("%Y-%m-%d, %H:%M:%S, %a")
+            rec_his.input_date=input_date
+            rec_his.save()
+
 
 
             data = []
@@ -112,10 +127,13 @@ def check_dpt(request):
             # return redirect('/recommend/symptominput')
         # 피쳐 선정으로 가야 하는 경우
         elif type(rec_dpt) is list :
-
+            print(rec_dpt)
             fix_feature = rec_dpt[-1]
-            choice = rec_dpt[:10]
-            print(fix_feature,choice)
+            choice_1 = rec_dpt[:5]
+            choice_2 = rec_dpt[5:10]
+            choice=[]
+            for i in range(5):
+                choice.append([choice_1[i],choice_2[i]])
             return render(request,'recommend/symptomchoice.html',{'datas':choice,'fix_feature':fix_feature,'symptomtext_origin':symptomtext})
 
     elif (request.method == "POST") & (type(request.POST.getlist('symptom_selected')) is list ) :
@@ -145,8 +163,8 @@ def check_dpt(request):
                 rec_his.symptominput = symptomtext_origin
                 user_info = AuthUser.objects.filter(username = request.user)[0]
                 rec_his.username = user_info
-                input_date=date.today()
-                rec_his.input_date=input_date.isoformat()
+                input_date=timezone.localtime().strftime("%Y-%m-%d, %H:%M:%S, %a")
+                rec_his.input_date=input_date
                 rec_his.save()
                 
                 data = []
@@ -159,6 +177,18 @@ def check_dpt(request):
                 data = json.dumps(data,ensure_ascii=False)
                 return render(request,'recommend/addrinput.html',{'datas':data})
             
+            ##로그인이 안된 경우도 데이터수집이 필요함
+            rec_his=UserHistory()
+            rec_his.select_symptom= ' '.join(symptom_list[:-1])
+            rec_his.rec_dpt=rec_dpt
+            rec_his.symptominput = symptomtext_origin
+            user_info = AuthUser.objects.filter(username = 'guest1234')[0]
+            rec_his.username = user_info
+            input_date=timezone.localtime().strftime("%Y-%m-%d, %H:%M:%S, %a")
+            rec_his.input_date=input_date
+            rec_his.save()
+
+
 
             data = []
             cols = ['rec_dpt']
@@ -269,7 +299,7 @@ def recommend_hos(request):
 #template파일에 데이터 넣어줌
 
 def hos_info(request,get_param,param):
-
+    
     data = HospitalInfo.objects.filter(hos_id=param)
     # 추천과 
     get_param = get_param.split('&')
