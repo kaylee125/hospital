@@ -1,4 +1,3 @@
-
   {% extends 'base.html' %}
   {% block content %}
   {% load static %}
@@ -7,6 +6,7 @@
       <div class="row">
         <div class="col-md-8 mx-auto" style="">
           <h2 class=""><i class="fa fa-exclamation" aria-hidden="true"></i> 증상 재확인 요청 <i class="fa fa-exclamation" aria-hidden="true"></i></h2>
+          <h2 class="" id="warn_text"></h2>
         </div>
       </div>
     </div>
@@ -28,24 +28,14 @@
                 <div class="row">
                   <div class="col-md-12">
                     <form method="post" action="{% url 'recommend:check_dpt' %}">
-<<<<<<< HEAD
                       {% csrf_token %} 
                       {% for data in datas %}
-                      <div class="row" >
+                      <div class="row" style="height: 38px;" >
                         <div class="col-md-4" ></div>
                         <div class="col-md-4 mt-4" >
                           <div class="form-group" >
                             <div class="input-group ml-5" >
                               <div class="input-group-append" >
-=======
-                       {% csrf_token %} {% for data in datas %} 
-                       <div class="row">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-4 mt-4">
-                          <div class="form-group">
-                            <div class="input-group ml-5">
-                              <div class="input-group-append">
->>>>>>> 2930c54a6b17dec45a1c4a3877f34071071ef901
                                 <div class="input-group-text" id="basic-addon1"><input type="checkbox" value="{{ data }}" name="symptom_selected" aria-label="Checkbox for following text input" class="shadow"></div><span class="input-group-text" id="basic-addon{{ forloop.counter0 }}"><b>{{ data }}</b>&nbsp;</span>
                               </div>
                             </div>
@@ -73,7 +63,7 @@
                 <div class="row">
                   <div class="col-md-12">
                     <div class="list-group mt-0 pt-0">
-                      <button type="submit" onClick="window.location.reload()" class="list-group-item list-group-item-action active text-center mt-5">선택지 새로고침</button>
+                      <button type="reset" onClick="window.location.reload()" class="list-group-item list-group-item-action active text-center mt-5">선택지 새로고침</button>
                       <!-- <a href="#" class="list-group-item list-group-item-action active text-center mt-5"><b>당신의 진료 과목은?</b></a> -->
                     </div>
                   </div>
@@ -147,4 +137,7 @@
 
   
   </script>
-  {% endblock %}
+
+
+
+{% endblock %}
