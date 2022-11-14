@@ -114,7 +114,7 @@ def check_dpt(request):
         elif type(rec_dpt) is list :
 
             fix_feature = rec_dpt[-1]
-            choice = rec_dpt[:6]
+            choice = rec_dpt[:10]
             print(fix_feature,choice)
             return render(request,'recommend/symptomchoice.html',{'datas':choice,'fix_feature':fix_feature,'symptomtext_origin':symptomtext})
 
