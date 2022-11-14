@@ -63,7 +63,7 @@ X_columns = X_columns[:-1]
 
 
 # 모델
-logis_pickle = joblib.load('/home/worker/project/hospital_rest/recommend/logistic_7132.pkl')
+logis_pickle = joblib.load('/home/worker/project/hospital_rest/recommend/logistic_7139.pkl')
 
 # 각 진료과별 피처 array 형태
 

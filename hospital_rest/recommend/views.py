@@ -89,12 +89,13 @@ def check_dpt(request):
             rec_his.symptominput=symptomtext
             rec_his.rec_dpt=rec_dpt
 
-            user_info = AuthUser.objects.filter(username = "guest1234")[0]
+
+            user_info = AuthUser.objects.filter(username = 'guest1234')[0]
+
             rec_his.username = user_info
             input_date=timezone.localtime().strftime("%Y-%m-%d, %H:%M:%S, %a")
             rec_his.input_date=input_date
             rec_his.save()
-
 
 
             data = []
