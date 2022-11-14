@@ -29,14 +29,17 @@
                   <div class="col-md-12">
                     <form method="post" action="{% url 'recommend:check_dpt' %}">
                       {% csrf_token %} 
-                      {% for data in datas %}
+                      {% for d_1,d_2 in datas %}
+
                       <div class="row" style="height: 38px;" >
                         <div class="col-md-4" ></div>
                         <div class="col-md-4 mt-4" >
                           <div class="form-group" >
                             <div class="input-group ml-5" >
                               <div class="input-group-append" >
-                                <div class="input-group-text" id="basic-addon1"><input type="checkbox" value="{{ data }}" name="symptom_selected" aria-label="Checkbox for following text input" class="shadow"></div><span class="input-group-text" id="basic-addon{{ forloop.counter0 }}"><b>{{ data }}</b>&nbsp;</span>
+
+                                <div class="input-group-text" id="basic-addon1"><input type="checkbox" value="{{ d_1 }}" name="symptom_selected" aria-label="Checkbox for following text input" class="shadow"></div><span class="input-group-text" id="basic-addon"><b style="width: 55px;">{{ d_1 }}</b>&nbsp;</span>
+                                <div class="input-group-text" id="basic-addon1"><input type="checkbox" value="{{ d_2 }}" name="symptom_selected" aria-label="Checkbox for following text input" class="shadow"></div><span class="input-group-text" id="basic-addon"><b style="width: 55px;">{{ d_2 }}</b>&nbsp;</span>
                               </div>
                             </div>
                           </div>

@@ -127,9 +127,13 @@ def check_dpt(request):
             # return redirect('/recommend/symptominput')
         # 피쳐 선정으로 가야 하는 경우
         elif type(rec_dpt) is list :
-            print()
+            print(rec_dpt)
             fix_feature = rec_dpt[-1]
-            choice = rec_dpt[:6]
+            choice_1 = rec_dpt[:5]
+            choice_2 = rec_dpt[5:10]
+            choice=[]
+            for i in range(5):
+                choice.append([choice_1[i],choice_2[i]])
             return render(request,'recommend/symptomchoice.html',{'datas':choice,'fix_feature':fix_feature,'symptomtext_origin':symptomtext})
 
     elif (request.method == "POST") & (type(request.POST.getlist('symptom_selected')) is list ) :
