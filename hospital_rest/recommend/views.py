@@ -89,7 +89,9 @@ def check_dpt(request):
             rec_his.symptominput=symptomtext
             rec_his.rec_dpt=rec_dpt
 
+
             user_info = AuthUser.objects.filter(username = 'guest1234')[0]
+
             rec_his.username = user_info
             input_date=timezone.localtime().strftime("%Y-%m-%d, %H:%M:%S, %a")
             rec_his.input_date=input_date
@@ -126,7 +128,10 @@ def check_dpt(request):
             # return redirect('/recommend/symptominput')
         # 피쳐 선정으로 가야 하는 경우
         elif type(rec_dpt) is list :
-            print(rec_dpt)
+            
+            if request.user.is_staff:
+                print('관리자확인')
+
             fix_feature = rec_dpt[-1]
             choice_1 = rec_dpt[:5]
             choice_2 = rec_dpt[5:10]
