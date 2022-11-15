@@ -6,7 +6,7 @@ from infra.jdbc import DataWarehouse,save_data
 from infra.spark_session import get_spark_session
 from infra.util import cal_std_day
 from pyspark.sql.types import *
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col, approx_count_distinct
 from pyspark.sql import Row
 from infra.hdfs_client import get_client
 
@@ -24,47 +24,48 @@ class KakaoMap:
 
     @classmethod
     def transform_data(cls):
-        # for n in range(1,33):
-
-        # sub_dir=str(n)+'kakao_hos_info2022-11-04.json'  
-        sub_dir='1kakao_hos_info2022-11-04.json'  
-        file_dir= cls.BASE_DIR+sub_dir
-        df=get_spark_session().read.json(file_dir, encoding='UTF-8').collect()
-        df1=get_spark_session().read.json(file_dir, encoding='UTF-8')
-        # print(df1.select(df1.진료정보).toLocalIterator())
         
-        #진료정보 row값 하나의 str객체로 합치기
+        total_df = get_spark_session().createDataFrame([], schema='TEL string, OPEN_INFO string, HOS_NAME string')
+        except_df = get_spark_session().createDataFrame([], schema='TEL string, OPEN_INFO string, HOS_NAME string')
 
+        for n in range(1,33):
 
-        info_df_list=df[0]['진료정보'][0]
-        tel_df_list=df[0]['전화번호']
+            print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', n)
+            
+            sub_dir=str(n)+'kakao_hos_info2022-11-04.json'   
+            file_dir= cls.BASE_DIR+sub_dir
+            df=get_spark_session().read.json(file_dir, encoding='UTF-8').collect()
+            df1=get_spark_session().read.json(file_dir, encoding='UTF-8')
+                        
+            temp_rows = []
 
-        info_list=[]
-        temp_rows = []
+            for i, e in enumerate(df):
+                info_list=[]
+                row_data = df[i]
 
-        for i, e in enumerate(df):
-            row_data = df[i]
+                if not row_data['진료정보']:
+                    info_list.append('진료정보가 없습니다')
+                    temp_rows.append(Row(전화번호=row_data['전화번호'], 진료정보=info_text))
+                    continue
 
-            print('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', row_data)
+                for e in row_data['진료정보'][0]:
+                    val=e.day+':'+e.time
+                    info_list.append(val)
 
-            if not row_data['진료정보']:
-                info_list.append('진료정보가 없습니다')
+                info_text='/'.join(info_list)
                 temp_rows.append(Row(전화번호=row_data['전화번호'], 진료정보=info_text))
-                continue
+                # print(temp_rows)
 
-            for e in row_data['진료정보'][0]:
-                val=e.day+':'+e.time
-                info_list.append(val)
+            temp_df = get_spark_session().createDataFrame(temp_rows)
 
-            info_text='/'.join(info_list)
-            temp_rows.append(Row(전화번호=row_data['전화번호'], 진료정보=info_text))
-
-        temp_df = get_spark_session().createDataFrame(temp_rows)
-        df1 = df1.drop('진료정보')
-        res_df = df1.join(temp_df, on='전화번호')
-        res_df.show(3)
-
-
+            # temp_df.show(3)
+            df1 = df1.drop('진료정보')
+            res_df = df1.join(temp_df, on='전화번호')
+            res_df = res_df.select(res_df.전화번호.alias('TEL'),res_df.진료정보.alias('OPEN_INFO'),res_df.병원명.alias('HOS_NAME'))
+            total_df = total_df.union(res_df)
+      
+        total_df = total_df.distinct()
+        save_data(DataWarehouse,total_df,'HOSPITAL_INFO_DETAIL')
 
 
 
@@ -82,4 +83,3 @@ class KakaoMap:
             # kakao_df.show()
             # save_data(DataWarehouse,kakao_df,'HOSPITAL_INFO_DETAIL')
             # print(n+'번째 파일 DW 업데이트 완료')
-

@@ -33,10 +33,10 @@ class KakaoMap:
 
         list_chunked = list_chunk(tel_list, 500)
         # print(len(list_chunked))
-        num=2
+        num=0
 
         #분할한 리스트 하나씩 반복
-        for tel_no in list_chunked[3:]:
+        for tel_no in list_chunked:
 
             kakao_url=[]
             data=[]

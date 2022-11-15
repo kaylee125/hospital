@@ -18,13 +18,6 @@ class DataMart(Enum):
        ,'password':'123qwe!@#QWE'
     }  
 
-class WebSite(Enum):
-    URL = 'jdbc:oracle:thin:@hospital_high?TNS_ADMIN=/home/worker/project/db/Wallet_HOSPITAL'
-    PROPS ={
-        'user':'web_hospital'
-       ,'password':'123qwe!@#QWE'
-    }  
-
 
 def save_data(config, dataframe, table_name):
     """
