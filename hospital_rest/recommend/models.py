@@ -134,6 +134,8 @@ class HospitalInfo(models.Model):
     longitude = models.FloatField(blank=True, null=True)
     latitude = models.FloatField(blank=True, null=True)
     sido_id = models.CharField(max_length=20)
+    open_info = models.CharField(max_length=200, blank=True, null=True)
+    
 
     class Meta:
         managed = False

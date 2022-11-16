@@ -259,7 +259,7 @@ def recommend_hos(request):
         # 추천과 and 위치 만족하는 DB 행들의 모임
         hos_db = HospitalInfo.objects.filter(criterion1 & criterion2)
 
-        cols = ['hos_id','hos_name','dist','hos_lat','hos_lng','rec_dpt','usr_lat','usr_lng']
+        cols = ['hos_id','hos_name','dist','hos_lat','hos_lng','rec_dpt','usr_lat','usr_lng','open_info']
         data = []
         for hos in hos_db:
             rows = []
@@ -281,6 +281,7 @@ def recommend_hos(request):
                 rows.append(rec_dpt)
                 rows.append(usr_lat)
                 rows.append(usr_lng)
+                rows.append(hos.open_info)
 
                 tmp = dict(zip(cols,rows))
                 data.append(tmp)
