@@ -1,0 +1,31 @@
+[2022-11-17 04:52:02 +0000] [89] [INFO] Starting gunicorn 20.1.0
+[2022-11-17 04:52:02 +0000] [89] [INFO] Listening at: http://0.0.0.0:8000 (89)
+[2022-11-17 04:52:02 +0000] [89] [INFO] Using worker: sync
+[2022-11-17 04:52:02 +0000] [91] [INFO] Booting worker with pid: 91
+/home/worker/.local/lib/python3.8/site-packages/pandas/core/computation/expressions.py:21: UserWarning: Pandas requires version '2.7.3' or newer of 'numexpr' (version '2.7.1' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/worker/.local/lib/python3.8/site-packages/sklearn/base.py:329: UserWarning: Trying to unpickle estimator LogisticRegression from version 1.1.2 when using version 1.1.3. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+[2022-11-17 04:52:57 +0000] [89] [CRITICAL] WORKER TIMEOUT (pid:91)
+[2022-11-17 13:52:57 +0900] [91] [INFO] Worker exiting (pid: 91)
+[2022-11-17 04:52:57 +0000] [108] [INFO] Booting worker with pid: 108
+/home/worker/.local/lib/python3.8/site-packages/pandas/core/computation/expressions.py:21: UserWarning: Pandas requires version '2.7.3' or newer of 'numexpr' (version '2.7.1' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/worker/.local/lib/python3.8/site-packages/sklearn/base.py:329: UserWarning: Trying to unpickle estimator LogisticRegression from version 1.1.2 when using version 1.1.3. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+[2022-11-17 05:08:37 +0000] [89] [INFO] Handling signal: int
+[2022-11-17 14:08:37 +0900] [108] [INFO] Worker exiting (pid: 108)
+[2022-11-17 05:08:37 +0000] [89] [INFO] Shutting down: Master
+[2022-11-17 05:47:32 +0000] [4717] [INFO] Starting gunicorn 20.1.0
+[2022-11-17 05:47:32 +0000] [4717] [INFO] Listening at: http://0.0.0.0:8000 (4717)
+[2022-11-17 05:47:32 +0000] [4717] [INFO] Using worker: sync
+[2022-11-17 05:47:32 +0000] [4719] [INFO] Booting worker with pid: 4719
+{'ip': '127.0.0.1', 'user': 'AnonymousUser', 'http_method': 'GET', 'url': '/', 'parameter': {}, 'timestamp': 1668664060, 'session_id': 'None'}
+/home/worker/.local/lib/python3.8/site-packages/pandas/core/computation/expressions.py:21: UserWarning: Pandas requires version '2.7.3' or newer of 'numexpr' (version '2.7.1' currently installed).
+  from pandas.core.computation.check import NUMEXPR_INSTALLED
+/home/worker/.local/lib/python3.8/site-packages/sklearn/base.py:329: UserWarning: Trying to unpickle estimator LogisticRegression from version 1.1.2 when using version 1.1.3. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+{'ip': '127.0.0.1', 'user': 'AnonymousUser', 'http_method': 'GET', 'url': '/recommend/symptominput/', 'parameter': {}, 'timestamp': 1668664066, 'session_id': 'None'}

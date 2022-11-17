@@ -15,6 +15,15 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# 브라우저 종료시 세션 종료
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# 더이상 행동이 없을 때 부터 세션만료시간이 지나면 세션 종료
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+# 세션만료시간 설정
+SESSION_EXPIRE_SECONDS = 600
+#세션만료 이후 리다이랙트
+SESSION_TIMEOUT_REDIRECT = '/'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -59,6 +68,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
+    'lookfordoc.middleware.LogMiddleware'
 ]
 
 ROOT_URLCONF = 'lookfordoc.urls'
