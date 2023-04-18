@@ -1,0 +1,431 @@
+{% extends 'base.html' %}
+  {% block content %}
+  {% load static %}
+  <div class="py-5 text-center align-items-center d-flex" style="background-image: linear-gradient(to left bottom, rgba(189, 195, 199, .75), rgba(44, 62, 80, .75)); background-size: 100%;">
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-md-8 mx-auto" style="">
+          <h1 class="display-3 mb-4">진료과목&nbsp;</h1>
+
+          <h3 class="display-3" id="outputs"></h3>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-0 pb-5 mb-5" style="">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-left">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row mt-5"></div>
+              <div class="row">
+                <div class="col-md-6">
+                  <form method="post"  action="{% url 'recommend:recommend_hos' %}" id="addr_input">
+                    {% csrf_token %}
+                    <label for="browser"><i class="fa fa-map-marker" aria-hidden="true"></i>검색 반경 거리를 정해주세요.</label>
+                      <select id="browsers" name="usr_dist" id="browser" >
+                        <option value="500m">500m</option>
+                        <option value="2km" selected>2km</option>
+                        <option value="5km">5km</option>
+                        <option value="10km">10km</option>
+                        <option value="20km">20km</option>
+                      </select>
+                      <input type="hidden" id="usr_lat" name="usr_lat">
+                      <input type="hidden" id="usr_lng" name="usr_lng">
+                      <input type="hidden" id="rec_dpt" name="rec_dpt">
+                      
+                      <button class="btn btn-info" type="submit" >전송</button>
+                    <div class="col-md-6">
+                </div>
+                <div class="col-md-5">
+                  <div class="row">
+
+                </div>
+                    <div class="col-md-6"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6"></div>
+                <div class="col-md-6"></div>
+              </div>
+            </div>
+            <div class="col-md-6 mt-5">
+              <div class="row"></div>
+              <div class="row">
+                <div class="col-md-12">
+                  <p class="text-monospace" id="clickLatlng" style="font-weight: bold; "><i class="fa fa-exclamation" aria-hidden="true"></i></p>
+                  <p class="text-monospace" id="centerAddr" style="font-weight: bold; "><i class="fa fa-exclamation" aria-hidden="true"></i></p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6"></div>
+                <div class="col-md-6"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 p-3 pb-5 text-center" style="">
+          <div class="row">
+            <div class="col-md-12 pb-0 mb-0" style="">
+              <div id='map' style="width:100%;height:400px;" ></div>
+              
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-md-6"></div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-6"></div>
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <button type="submit" class="btn btn-info mx-0 px-4" >확인</button></div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="row"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 class="text-muted">우리 사이트로 당신은</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="text-right col-md-6">
+          <div class="row my-5">
+            <div class="order-lg-2 text-center col-lg-2 col-3"> <span class="fa-stack fa-2x">
+                <i class="fa fa-circle fa-stack-2x text-primary"></i>
+                <i class="fa fa-stack-1x fa-hourglass-1 text-white"></i>
+              </span> </div>
+            <div class="text-lg-right text-left order-lg-1 col-lg-10 col-9">
+              <h4>시간절약</h4>
+              <p>증상에 대해 검색하는 시간을 절약합니다.</p>
+            </div>
+          </div>
+          <div class="row my-5">
+            <div class="order-lg-2 text-center col-lg-2 col-3"> <span class="fa-stack fa-2x">
+                <i class="fa fa-circle fa-stack-2x text-secondary"></i>
+                <i class="fa fa-stack-1x fa-stethoscope text-white"></i>
+              </span> </div>
+            <div class="text-lg-right text-left order-lg-1 col-lg-10 col-9">
+              <h4>Self 진단</h4>
+              <p>스스로 진단해볼 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+        <div class="text-left col-md-6">
+          <div class="row my-5">
+            <div class="text-center col-lg-2 col-3"> <span class="fa-stack fa-2x">
+                <i class="fa fa-circle fa-stack-2x text-danger"></i>
+                <i class="fa fa-stack-1x text-white fa-file-text-o"></i>
+              </span> </div>
+            <div class="col-lg-10 col-9">
+              <h4>Save and use it</h4>
+              <p>당신만의 증상 검색기록을 저장하고 즐겨찾기 기능을 사용해보세요.</p>
+            </div>
+          </div>
+          <div class="row my-5">
+            <div class="text-center col-lg-2 col-3"> <span class="fa-stack fa-2x">
+                <i class="fa fa-circle fa-stack-2x text-info"></i>
+                <i class="fa fa-stack-1x text-white fa-search"></i>
+              </span> </div>
+            <div class="col-lg-10 col-9">
+              <h4>Take it easily</h4>
+              <p>쉽게 위치와 정보를 찾을 수 있습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-5 section bg-light">
+    <div class="container p-3">
+      <div class="row align-items-center mb-4">
+        <div class="col-lg-3">
+          <h2 class="mb-3">We are with MultiCampus</h2>
+        </div>
+        <div class="pl-lg-4 col-lg-8  mb-2">
+          <p class="lead mb-0 text-muted">증상에 대한 진료과 추천은 각 진료과 별 주요 증상에 대한 모델링을 기반으로 이루어지며 카카오맵과 연동하여 병원에 대한 정보를 제공합니다.&nbsp; Clinic recommendations for symptoms are made based on modeling of major symptoms for each department, and information about hospitals is provided in conjunction with Kakao Map. Thanks.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12"> </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-white bg-dark" id="where">
+    <div class="container">
+      <div class="row">
+        <div class="p-5 col-md-6">
+          <h3><b>룩포닥</b></h3>
+          <p class="">Seoul gangnam gu - Olympic ro 777-93</p>
+          <p class="">
+            <a href="#">hello@lookfordoc.co.kr</a>
+          </p>
+          <p class="mb-3">02-927-72271</p>
+          <a href="#" target="_blank"><i class="fa d-inline fa-lg mr-3 text-white fa-linkedin"></i></a>
+          <a href="#" target="_blank"><i class="fa fa-facebook d-inline fa-lg mr-3 text-white"></i></a>
+        </div>
+        <div class="p-5 col-md-6">
+          <h3>Get in touch</h3>
+          <form>
+            <div class="form-group">
+              <input type="email" class="form-control form-control-sm" placeholder="Email" required="required" name="email"> </div>
+            <div class="form-group">
+              <input type="text" class="form-control form-control-sm" id="inlineFormInput" placeholder="Subject" required="required" name="subject"> </div>
+            <div class="form-group"><textarea class="form-control p-1 form-control-sm" id="exampleTextarea" rows="3" placeholder="Your message" name="message"></textarea></div>
+            <button type="submit" class="btn btn-outline-light btn-sm">SUBMIT</button>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mt-3">
+          <p class="text-center text-muted">© Copyright 2018 Pingendo - All rights reserved. </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <!-- Script: Smooth scrolling between anchors in the same page -->
+  <script src="{% static 'js/smooth-scroll.js' %}"></script>
+  <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 20px;right:20px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:220px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;<img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16"></pingendo>
+</div>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=89b0541f03013f5b0f1f1170d8eb4f37&libraries=services,clusterer,drawing"></script>
+	<script>
+    var data = '{{ datas|safe }}';
+    var json_data = JSON.parse(data);
+    my_lat = '';
+    console.log(json_data)
+    document.getElementById('outputs').innerText = json_data[0].rec_dpt
+
+function currentLocation() {
+	// HTML5의 geolocation으로 사용할 수 있는지 확인합니다
+	if (navigator.geolocation) {
+
+		// GeoLocation을 이용해서 접속 위치를 얻어옵니다
+		navigator.geolocation.getCurrentPosition(function(position) {
+
+			first_lat = position.coords.latitude, // 위도
+			first_lon = position.coords.longitude; // 경도
+
+      // hidden 태그에 추천과, 사용자의 위경도 POST에 담아서 같이 보내주기
+      document.getElementById('rec_dpt').value = json_data[0].rec_dpt
+      // 위경도는 사용자의 보정여부를 따져보아야한다.
+      if (my_lat == '') {
+        document.getElementById('usr_lat').value = first_lat
+        document.getElementById('usr_lng').value = first_lon
+      } else {
+        document.getElementById('usr_lat').value = my_lat
+        document.getElementById('usr_lng').value = my_lng
+      }
+
+
+			var locPosition = new kakao.maps.LatLng(first_lat, first_lon); // 마커가 표시될 위치를 geolocation으로 얻어온 좌표로 생성합니다
+
+			var message = '<div style="padding:5px;">현위치</div>'; // 인포윈도우에 표시될 내용입니다
+
+            
+			// 마커와 인포윈도우를 표시합니다
+			displayMarker(locPosition, message);
+
+
+		});
+	} else { // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+
+		var locPosition = new kakao.maps.LatLng(37.567167, 127.190292),
+			message = '현재 위치를 알 수 없어 기본 위치로 이동합니다.'
+
+		currentLatLon['lat'] = 37.567167
+		currentLatLon['lon'] = 127.190292
+
+		displayMarker(locPosition, message);
+	}
+	return true
+}
+
+currentLocation();
+
+function displayMarker(locPosition, message) {
+	var imageSize = new kakao.maps.Size(24, 35);
+	// var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+	// 마커를 생성합니다
+	marker_origin = new kakao.maps.Marker({
+		map: map, 
+		position: locPosition, 
+		// image : markerImage, 
+	});
+
+	var iwContent = message, // 인포윈도우에 표시할 내용
+		iwRemoveable = true;
+
+	// 인포윈도우를 생성합니다
+	infowindow = new kakao.maps.InfoWindow({
+		content : iwContent,
+		removable : iwRemoveable
+	});
+
+	// 인포윈도우를 마커위에 표시합니다
+	infowindow.open(map, marker_origin);
+
+	// 지도 중심좌표를 접속위치로 변경합니다
+	map.setCenter(locPosition);
+}
+
+
+// 지도 클릭으로 마킹
+
+
+var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+    mapOption = { 
+        center: new kakao.maps.LatLng(36.7259136, 126.73024), // 지도의 중심좌표
+        level: 3 // 지도의 확대 레벨
+    };
+
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+// 지도를 클릭한 위치에 표출할 마커입니다
+var marker = new kakao.maps.Marker({ 
+    // 지도 중심좌표에 마커를 생성합니다 
+    position: map.getCenter() ,
+	text: '나의 실제위치'
+}); 
+// 지도에 마커를 표시합니다
+marker.setMap(map);
+
+// 지도에 클릭 이벤트를 등록합니다
+// 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {        
+    
+    // 클릭한 위도, 경도 정보를 가져옵니다 
+    var latlng = mouseEvent.latLng; 
+    
+    // 마커 위치를 클릭한 위치로 옮깁니다
+    marker.setPosition(latlng);
+    
+    var message = '선택하신 장소의 위도는 ' + Math.round(latlng.getLat()*1000)/1000 + ' 이고, ';
+    message += '경도는 ' + Math.round(latlng.getLng()*1000)/1000 + ' 입니다';
+    var resultDiv = document.getElementById('clickLatlng'); 
+    resultDiv.innerHTML = message;
+	  infowindow.close(map, marker_origin);
+    // infowindow.removeMarkers(marker_origin);
+	my_lat = latlng.getLat();
+	my_lng = latlng.getLng();
+  document.getElementById('usr_lat').value = my_lat
+  document.getElementById('usr_lng').value = my_lng
+ 
+  
+});
+
+
+
+
+
+ 
+
+
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+// 좌표로 주소 얻어내기
+
+
+
+// 주소-좌표 변환 객체를 생성합니다
+var geocoder = new kakao.maps.services.Geocoder();
+
+var marker = new kakao.maps.Marker(), // 클릭한 위치를 표시할 마커입니다
+    infowindow = new kakao.maps.InfoWindow({zindex:1}); // 클릭한 위치에 대한 주소를 표시할 인포윈도우입니다
+
+// 현재 지도 중심좌표로 주소를 검색해서 지도 좌측 상단에 표시합니다
+searchAddrFromCoords(map.getCenter(), displayCenterInfo);
+
+// 지도를 클릭했을 때 클릭 위치 좌표에 대한 주소정보를 표시하도록 이벤트를 등록합니다
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+    searchDetailAddrFromCoords(mouseEvent.latLng, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            var detailAddr = !!result[0].road_address ? '<div>도로명주소 : ' + result[0].road_address.address_name + '</div>' : '';
+            detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
+            
+            var content = '<div class="bAddr">' +
+                            '<span class="title">주소 상세정보</span>' + 
+                            detailAddr + 
+                        '</div>';
+            my_addr = result[0].address.address_name
+            // 마커를 클릭한 위치에 표시합니다 
+            marker.setPosition(mouseEvent.latLng);
+            marker.setMap(map);
+
+            // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
+            infowindow.setContent(content);
+            infowindow.open(map, marker);
+        }   
+    });
+});
+
+// 중심 좌표나 확대 수준이 변경됐을 때 지도 중심 좌표에 대한 주소 정보를 표시하도록 이벤트를 등록합니다
+
+kakao.maps.event.addListener(map, 'idle', function() {
+    searchAddrFromCoords(map.getCenter(), displayCenterInfo);
+});
+
+function searchAddrFromCoords(coords, callback) {
+    // 좌표로 행정동 주소 정보를 요청합니다
+    geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);         
+}
+
+function searchDetailAddrFromCoords(coords, callback) {
+    // 좌표로 법정동 상세 주소 정보를 요청합니다
+    geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+}
+
+// 지도 좌측상단에 지도 중심좌표에 대한 주소정보를 표출하는 함수입니다
+function displayCenterInfo(result, status) {
+    if (status === kakao.maps.services.Status.OK) {
+        var infoDiv = document.getElementById('centerAddr');
+
+        for(var i = 0; i < result.length; i++) {
+            // 행정동의 region_type 값은 'H' 이므로
+            if (result[i].region_type === 'H') {
+                console.log("result값은" + result[i])
+                infoDiv.innerText = result[i].address_name;
+                break;
+            }
+        }
+    }    
+}
+
+
+	</script>
+{% endblock %}

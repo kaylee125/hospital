@@ -1,0 +1,307 @@
+  {% extends 'base.html' %}
+  {% block content %}
+  {% load static%}
+  <div class="py-5 text-center align-items-center d-flex" style="background-image: linear-gradient(to left bottom, rgba(189, 195, 199, .75), rgba(44, 62, 80, .75)); background-size: 100%;">
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-md-8 mx-auto" style="">
+          <h1 class="display-3 mb-4">진료과목&nbsp;</h1>
+          <h3 class="display-3" id="outputs"></h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pb-5 px-0 mx-0">
+    <div class="container">
+      <div class="row">
+        <div class="mx-auto col-md-12 py-4 px-0">
+          <h2 class="mb-4"><i class="fa fa-user-md" aria-hidden="true"></i> 병원리스트</h2>
+          <h2 class="mb-4" id="no_hospital"></h2>
+          <div class="row">
+            
+            <form method="post" action="{% url 'recommend:check_dpt' %}" id="change_dist" style="width: 100%;display: inline-flex;">
+              
+              {% csrf_token %}
+            <table class="table table-hover" style="margin-right: 15px;height: 400px;">
+              <thead>
+                <tr>
+                  <th scope="col">병원명</th>
+                  <th scope="col">거리(m)</th>
+                </tr>
+              </thead>
+              <tbody id="hospital_list" style="display: block;max-height:350px;width: 130%;">
+              </tbody>
+            </table>
+            <div id='map' style="width:100%;height:400px;display:inline;" ></div>
+            </form>
+            <div class="col-md-7 mt-4">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-white bg-dark" id="where">
+    <div class="container">
+      <div class="row">
+        <div class="p-5 col-md-6">
+          <h3><b>룩포닥</b></h3>
+          <p class="">Seoul gangnam gu - Olympic ro 777-93</p>
+          <p class="">
+            <a href="#">hello@lookfordoc.co.kr</a>
+          </p>
+          <p class="mb-3">
+            <a href="#">02-927-72278</a>
+          </p>
+          <a href="#" target="_blank"><i class="fa d-inline fa-lg mr-3 text-white fa-linkedin"></i></a>
+          <a href="#" target="_blank"><i class="fa fa-facebook d-inline fa-lg mr-3 text-white"></i></a>
+        </div>
+        <div class="p-5 col-md-6">
+          <h3>Get in touch</h3>
+          <form>
+            <div class="form-group">
+              <input type="email" class="form-control form-control-sm" placeholder="Email" required="required" name="email"> </div>
+            <div class="form-group">
+              <input type="text" class="form-control form-control-sm" id="inlineFormInput" placeholder="Subject" required="required" name="subject"> </div>
+            <div class="form-group"><textarea class="form-control p-1 form-control-sm" id="exampleTextarea" rows="3" placeholder="Your message" name="message"></textarea></div>
+            <button type="submit" class="btn btn-outline-light btn-sm">SUBMIT</button>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mt-3">
+          <p class="text-center text-muted">© Copyright 2018 Pingendo - All rights reserved. </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <!-- Script: Smooth scrolling between anchors in the same page -->
+  <script src="{% static 'js/smooth-scroll.js' %}"></script>
+
+  
+  
+  <!-- 지도부분 -->
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=89b0541f03013f5b0f1f1170d8eb4f37&libraries=services,clusterer,drawing"></script>
+  
+  <script>
+
+    // views.py 로부터 데이터 가져와서 json객체로 만들기
+    
+    var data = '{{ datas|safe }}';
+    data_length = data.length
+    console.log(data_length)
+    var json_data = JSON.parse(data);
+
+    // json 거리 가까운 순으로 오름 차순 정렬
+    function custonSort(a, b) {
+    if(a.dist == b.dist){ return 0} return  a.dist > b.dist ? 1 : -1;
+    }
+
+
+
+
+    markers = new Array;
+    if (data_length < 100 ) {
+           
+      var dpt = json_data.rec_dpt
+      var lat = json_data.usr_lat
+      var lng = json_data.usr_lng
+      
+      // 병원과 출력
+      document.getElementById('outputs').innerText = dpt;
+
+
+      // 근처에 병원없음 알림 
+      let tagArea = document.getElementById('no_hospital');
+      let new_divNoHosTag = document.createElement('h5');
+      // new_divNoHosTag.setAttribute('class', 'col-md-4 my-2');
+      new_divNoHosTag.setAttribute('id', 'no_hos_text');
+      tagArea.appendChild(new_divNoHosTag);
+      document.getElementById('no_hos_text').innerText = "사용자의 위치 근처에 맞는 병원이 없습니다.";
+
+
+      // 카카오맵 생성
+      var container = document.getElementById('map');
+      var options = {
+        center: new kakao.maps.LatLng(lat, lng),
+        level: 5
+      };
+      
+      var map = new kakao.maps.Map(container, options);
+
+      // 내위치 마커 생성
+      let marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(lat, lng)
+        });
+      markers.push(marker)
+
+      // Marker 담을 클러스터 객체 생성
+      var clusterer = new kakao.maps.MarkerClusterer({
+      map: map,
+      markers: markers,
+      gridSize: 35,
+      averageCenter: true,
+      minLevel: 6,
+      disableClickZoom: true,
+      styles: [{
+          width : '53px', height : '52px',
+          background: 'url(cluster.png) no-repeat',
+          color: '#fff',
+          textAlign: 'center',
+          lineHeight: '54px'
+      }]
+      });
+      //내위치 메시지박스 출력
+      var infowindow = new kakao.maps.InfoWindow({
+          content : '<div style="padding:1px;">내위치</div>' // 인포윈도우에 표시할 내용
+      });
+
+      // 인포윈도우를 지도에 표시한다
+      infowindow.open(map, markers[0]);
+      
+
+    } else {
+
+
+      // 사용자와 병원사이의 거리 오름차순 정렬
+      json_data.sort(custonSort);
+      console.log(json_data)
+
+      // 추천과 출력
+      document.getElementById('outputs').innerText = json_data[0].rec_dpt
+      var container = document.getElementById('map');
+      var options = {
+        center: new kakao.maps.LatLng(json_data[0].usr_lat, json_data[0].usr_lng),
+        level: 7
+      };
+      
+      var map = new kakao.maps.Map(container, options);
+
+      
+      
+
+      // 병원 리스트 JS 동적 생성
+      var targetTbody = document.getElementById('hospital_list');
+      document.getElementById('hospital_list').style.overflow='auto';
+      for (let index = 1; index <50; index++) {
+
+
+        
+        let new_trTag = document.createElement('tr');
+        let new_tdHosTag = document.createElement('td');
+        let new_aHrefTag = document.createElement('a');
+        let new_tdDistTag = document.createElement('td');
+
+        targetTbody.appendChild(new_trTag);
+        new_trTag.appendChild(new_tdHosTag);
+        new_tdHosTag.appendChild(new_aHrefTag);
+        new_trTag.appendChild(new_tdDistTag);
+
+
+        
+        new_trTag.setAttribute('id', 'hos_'+String(index));
+        new_tdHosTag.setAttribute('id', 'hos_name_'+String(index));
+        new_tdHosTag.setAttribute('style','width:89%')
+        new_tdDistTag.setAttribute('id', 'dist_'+String(index));
+        new_aHrefTag.setAttribute('id','href_'+String(index));
+        new_aHrefTag.setAttribute('style',"cursor: pointer;color:black;");
+        new_aHrefTag.setAttribute('href',
+          "/recommend/hosinfo/" + 
+          json_data[index-1].rec_dpt + '&' + 
+          String(json_data[index-1].usr_lat) + '&' + 
+          String(json_data[index-1].usr_lng) +
+          "/" + 
+          String(json_data[index-1].hos_id));
+        
+      new_aHrefTag.innerHTML = json_data[index-1].hos_name ;
+        new_tdDistTag.innerHTML = json_data[index-1].dist;
+        
+
+
+
+
+        
+      }
+
+
+
+      // 유저데이터
+      let marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(json_data[0].usr_lat, json_data[0].usr_lng)
+        });
+      markers.push(marker)
+
+      // 병원 markers 생성    
+      for (let index = 1; index < 50; index++) {
+        let marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng( json_data[index-1].hos_lat, json_data[index-1].hos_lng )
+        });
+        markers.push(marker)
+      }
+
+
+      // Marker 담을 클러스터 객체 생성
+      var clusterer = new kakao.maps.MarkerClusterer({
+      map: map,
+      markers: markers,
+      gridSize: 35,
+      averageCenter: true,
+      minLevel: 6,
+      disableClickZoom: true,
+      styles: [{
+          width : '53px', height : '52px',
+          background: 'url(cluster.png) no-repeat',
+          color: '#fff',
+          textAlign: 'center',
+          lineHeight: '54px'
+      }]
+      });
+      //내위치 메시지박스 출력
+      var infowindow = new kakao.maps.InfoWindow({
+          content : '<div style="padding:1px;">내위치</div>' // 인포윈도우에 표시할 내용
+      });
+
+      // 인포윈도우를 지도에 표시한다
+      infowindow.open(map, markers[0]);
+
+
+      // 병원 인포윈도우 표시
+      for (let index = 1; index < 50; index++) {
+
+        //내위치 메시지박스 출력
+        var infowindow = new kakao.maps.InfoWindow({
+        content : '<div style="padding:1px;">' +json_data[index-1].hos_name  + '</div>' // 인포윈도우에 표시할 내용
+        });
+
+        // 인포윈도우를 지도에 표시한다
+        infowindow.open(map, markers[index]);
+
+      }
+    
+    
+    
+    }
+
+    
+
+
+
+
+
+		
+
+
+
+
+  </script>
+  
+
+
+
+  
+  {% endblock %}
